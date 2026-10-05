@@ -1,0 +1,79 @@
+/* ==========================================================================
+   Panmacy Design System — Tokens
+   Grounded in the subject: a pharmacy marketplace. Primary green reads as
+   pharmacy signage / medical trust; amber is drawn from the classic amber
+   medicine bottle and carries price/urgency; background is a warm paper
+   tone rather than clinical white.
+   ========================================================================== */
+
+:root {
+  /* ---- Brand color ---- */
+  --pm-ink-900: #0E2422;      /* deepest text / logo ink */
+  --pm-green-800: #12433C;    /* primary dark (navbar, headings on light) */
+  --pm-green-600: #1D7A63;    /* primary brand green (buttons, links) */
+  --pm-green-500: #279B7D;    /* hover/active green */
+  --pm-green-100: #E3F1EA;    /* pale green surface (tags, selected states) */
+  --pm-green-50:  #F2F8F4;    /* faint green wash */
+
+  --pm-amber-600: #C4761A;    /* deep amber (price emphasis, warnings) */
+  --pm-amber-500: #DB8B2C;    /* amber accent (CTA highlight, ratings) */
+  --pm-amber-100: #FBEDD7;    /* pale amber surface (badges) */
+
+  --pm-coral-600: #C24B3F;    /* stock-low / destructive */
+  --pm-coral-100: #F8E4E0;
+
+  --pm-paper-0:   #FDFBF6;    /* page background — warm paper, not white */
+  --pm-paper-100: #F6F2E9;    /* section band background */
+  --pm-white:     #FFFFFF;
+
+  --pm-ink-700: #24332F;      /* body text */
+  --pm-ink-500: #58685F;      /* secondary text */
+  --pm-ink-300: #93A29A;      /* placeholder / disabled text */
+  --pm-line-200: #E4E0D3;     /* hairline borders on paper */
+  --pm-line-100: #ECE8DC;
+
+  /* ---- Type ---- */
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-ui: "Plus Jakarta Sans", -apple-system, "Segoe UI", sans-serif;
+
+  --fs-h1: 2.25rem;
+  --fs-h2: 1.75rem;
+  --fs-h3: 1.375rem;
+  --fs-h4: 1.125rem;
+  --fs-body: 0.9375rem;
+  --fs-small: 0.8125rem;
+  --fs-xs: 0.6875rem;
+
+  --lh-tight: 1.15;
+  --lh-snug: 1.35;
+  --lh-body: 1.55;
+
+  /* ---- Space (8px rhythm w/ 4px half-steps) ---- */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+  --sp-16: 64px;
+
+  /* ---- Radius — deliberately different per content type, not one
+     radius for everything: products are gently rounded, badges are
+     pill-shaped, chat bubbles asymmetric, inputs crisper. ---- */
+  --r-card: 14px;
+  --r-control: 10px;
+  --r-pill: 999px;
+  --r-sm: 6px;
+
+  /* ---- Shadow (soft, warm-tinted, not generic grey) ---- */
+  --shadow-card: 0 1px 2px rgba(20, 30, 26, 0.06), 0 8px 20px -12px rgba(20, 30, 26, 0.18);
+  --shadow-pop: 0 12px 32px -8px rgba(14, 36, 34, 0.28);
+  --shadow-focus: 0 0 0 3px rgba(39, 155, 125, 0.28);
+
+  /* ---- Layout ---- */
+  --container: 1180px;
+  --nav-h: 68px;
+}

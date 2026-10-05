@@ -1,0 +1,77 @@
+/* ==========================================================================
+   Panmacy — Base / Reset / Typography
+   ========================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--pm-paper-0);
+  color: var(--pm-ink-700);
+  font-family: var(--font-ui);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
+input, select, textarea { font-family: inherit; font-size: inherit; color: inherit; }
+ul { list-style: none; margin: 0; padding: 0; }
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  color: var(--pm-ink-900);
+  line-height: var(--lh-tight);
+  margin: 0;
+  font-weight: 600;
+}
+h1 { font-size: var(--fs-h1); letter-spacing: -0.01em; }
+h2 { font-size: var(--fs-h2); letter-spacing: -0.01em; }
+h3 { font-size: var(--fs-h3); }
+h4 { font-size: var(--fs-h4); }
+
+p { margin: 0; }
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-radius: var(--r-sm);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
+/* ---- Layout helpers ---- */
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--sp-6);
+}
+
+.page-body {
+  padding-top: var(--sp-8);
+  padding-bottom: var(--sp-16);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---- Scrollbar for horizontal chip rows ---- */
+.chip-scroll {
+  display: flex;
+  gap: var(--sp-2);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.chip-scroll::-webkit-scrollbar { display: none; }

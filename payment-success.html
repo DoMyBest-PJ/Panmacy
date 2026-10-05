@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Order Successful — Panmacy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/variables.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/pages/success.css">
+</head>
+<body>
+
+<header class="navbar">
+  <div class="container navbar__inner">
+    <a href="index.html" class="pm-logo">
+      <svg class="pm-logo__mark" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="9" fill="#1D7A63"/><path d="M16 9v14M9 16h14" stroke="#FDFBF6" stroke-width="3.4" stroke-linecap="round"/><circle cx="23.5" cy="8.5" r="3" fill="#DB8B2C"/></svg>
+      <span class="pm-logo__word">Panmacy</span>
+    </a>
+  </div>
+</header>
+
+<main class="success-shell">
+  <div class="card success-card" data-group="success-card">
+
+    <!-- Success illustration -->
+    <svg class="success-icon" viewBox="0 0 84 84" fill="none">
+      <circle cx="42" cy="42" r="40" fill="var(--pm-green-100)"/>
+      <circle cx="42" cy="42" r="28" fill="var(--pm-green-600)"/>
+      <path d="M31 42l8 8 15-17" stroke="#FDFBF6" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="70" cy="18" r="4" fill="var(--pm-amber-500)"/>
+      <circle cx="10" cy="55" r="3" fill="var(--pm-amber-500)"/>
+    </svg>
+
+    <h1>Payment Successful!</h1>
+    <p class="success-card__sub">Thanks for your order. The pharmacy is preparing it for delivery.</p>
+
+    <div class="order-number-row">
+      <span>Order Number</span>
+      <strong>#PM-20260924-0142</strong>
+      <button type="button" aria-label="Copy order number" data-copy-order>
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="4.5" y="4.5" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M2.5 9.5V3a1 1 0 011-1h6" stroke="currentColor" stroke-width="1.2"/></svg>
+      </button>
+    </div>
+
+    <!-- Delivery status -->
+    <div class="status-stepper" data-group="delivery-status">
+      <div class="status-step">
+        <div class="status-step__line"></div>
+        <div class="status-step__dot"><svg viewBox="0 0 16 16" fill="none"><path d="M3.5 8l3 3 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="status-step__label">Order Confirmed</span>
+      </div>
+      <div class="status-step is-pending">
+        <div class="status-step__line"></div>
+        <div class="status-step__dot"><svg viewBox="0 0 16 16" fill="none"><path d="M2 6l1-3h10l1 3M2 6v7a1 1 0 001 1h10a1 1 0 001-1V6M2 6h12" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></div>
+        <span class="status-step__label">Pharmacy Preparing</span>
+      </div>
+      <div class="status-step is-pending">
+        <div class="status-step__line"></div>
+        <div class="status-step__dot"><svg viewBox="0 0 16 16" fill="none"><path d="M2 4h9v6H2z" stroke="currentColor" stroke-width="1.3"/><path d="M11 7h2l1.5 2v1H11V7z" stroke="currentColor" stroke-width="1.3"/></svg></div>
+        <span class="status-step__label">Out for Delivery</span>
+      </div>
+      <div class="status-step is-pending">
+        <div class="status-step__dot"><svg viewBox="0 0 16 16" fill="none"><path d="M8 2l1.4 3.6L13 6l-2.6 2.6L11 12l-3-1.8L5 12l.6-3.4L3 6l3.6-.4L8 2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg></div>
+        <span class="status-step__label">Delivered</span>
+      </div>
+    </div>
+
+    <!-- Order summary -->
+    <div class="order-summary-mini" data-group="order-summary-mini">
+      <div class="order-summary-mini__row"><span>Items (3)</span><strong>฿465</strong></div>
+      <div class="order-summary-mini__row"><span>Delivery</span><strong>฿40</strong></div>
+      <div class="order-summary-mini__row"><span>Total Paid</span><strong>฿505</strong></div>
+      <div class="order-summary-mini__row"><span>Payment Method</span><strong>Credit Card •••• 4821</strong></div>
+      <div class="order-summary-mini__row"><span>Estimated Arrival</span><strong>Today 1:00–2:30 PM</strong></div>
+    </div>
+
+    <!-- Next actions -->
+    <div class="success-actions" data-group="success-actions">
+      <a href="index.html" class="btn btn--outline">Continue Shopping</a>
+      <a href="#" class="btn btn--primary">View Order</a>
+    </div>
+  </div>
+</main>
+
+<script src="js/main.js"></script>
+<script src="js/pages/success.js"></script>
+</body>
+</html>

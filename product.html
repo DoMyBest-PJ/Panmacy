@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Paracetamol 500mg — Panmacy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/variables.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/pages/product.css">
+<link rel="stylesheet" href="css/pages/products.css">
+</head>
+<body>
+
+<!-- NAVBAR (shared) -->
+<header class="navbar">
+  <div class="container navbar__inner">
+    <a href="index.html" class="pm-logo">
+      <svg class="pm-logo__mark" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="9" fill="#1D7A63"/><path d="M16 9v14M9 16h14" stroke="#FDFBF6" stroke-width="3.4" stroke-linecap="round"/><circle cx="23.5" cy="8.5" r="3" fill="#DB8B2C"/></svg>
+      <span class="pm-logo__word">Panmacy</span>
+    </a>
+    <button class="navbar__menu-toggle" data-nav-toggle aria-expanded="false" aria-label="Open menu">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+    <nav class="navbar__links" data-nav-drawer aria-label="Main menu">
+      <a href="index.html" class="navbar__link is-active">Browse Products</a>
+      <a href="forum.html" class="navbar__link">Health Forum</a>
+      <a href="chat.html" class="navbar__link">Pharmacist Chat</a>
+    </nav>
+    <div class="navbar__actions">
+      <button class="navbar__icon-btn" aria-label="Notifications">
+        <svg width="19" height="19" viewBox="0 0 19 19" fill="none"><path d="M4 14c0-.6.4-1 .9-1.2C6 12.3 6.5 11 6.5 9.5V8a3 3 0 016 0v1.5c0 1.5.5 2.8 1.6 3.3.5.2.9.6.9 1.2H4z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M8 15.5a1.5 1.5 0 003 0" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        <span class="navbar__badge">2</span>
+      </button>
+      <a href="cart.html" class="navbar__icon-btn" aria-label="Shopping Cart">
+        <svg width="19" height="19" viewBox="0 0 19 19" fill="none"><path d="M3 4h1.6L6 12.5a1.5 1.5 0 001.5 1.2h6a1.5 1.5 0 001.5-1.2L16 6.5H5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7.5" cy="16" r="1.1" fill="currentColor"/><circle cx="13.5" cy="16" r="1.1" fill="currentColor"/></svg>
+        <span class="navbar__badge" data-cart-badge>3</span>
+      </a>
+            <div class="navbar__profile">
+        <button type="button" class="navbar__avatar" data-profile-toggle aria-expanded="false" aria-label="My Account" aria-haspopup="true">N</button>
+        <div class="dropdown-menu" data-profile-menu role="menu">
+          <div class="dropdown-menu__header">
+            <div class="dropdown-menu__name">Nattawat S.</div>
+            <div class="dropdown-menu__email">nattawat@email.com</div>
+          </div>
+          <a href="profile.html" class="dropdown-item" role="menuitem">
+            <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5.5" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M3 13.5c0-2.5 2.2-4 5-4s5 1.5 5 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            Profile
+          </a>
+          <a href="orders.html" class="dropdown-item" role="menuitem">
+            <svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12v9a1 1 0 01-1 1H3a1 1 0 01-1-1V4zM5 4V3a3 3 0 016 0v1" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+            View Orders
+          </a>
+          <div class="dropdown-submenu">
+            <button type="button" class="dropdown-item dropdown-submenu__toggle" data-submenu-toggle role="menuitem">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M2 6l1-3h10l1 3M2 6v7a1 1 0 001 1h10a1 1 0 001-1V6M2 6h12" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+              Pharmacy
+            </button>
+            <div class="dropdown-submenu__list">
+              <a href="pharmacy-signup.html" class="dropdown-item" role="menuitem">Sign up (if not owned)</a>
+              <a href="pharmacy-dashboard.html" class="dropdown-item" role="menuitem">View owned shop</a>
+            </div>
+          </div>
+          <div class="dropdown-divider"></div>
+          <a href="login.html" class="dropdown-item dropdown-item--danger" role="menuitem">
+            <svg viewBox="0 0 16 16" fill="none"><path d="M6 3H3.5A1.5 1.5 0 002 4.5v7A1.5 1.5 0 003.5 13H6M10 11l3-3-3-3M13 8H6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Sign out
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="container page-body">
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="index.html">Browse Products</a><span>/</span>
+      <a href="index.html">Pain Relief/Fever</a><span>/</span>
+      <span class="current">Paracetamol 500mg 10 Tablets</span>
+    </nav>
+
+    <div class="product-layout">
+
+      <!-- =========================================================
+           GALLERY
+      ========================================================= -->
+      <div data-group="gallery">
+        <div class="card gallery__main tile--pain" data-gallery-main>
+          <svg viewBox="0 0 48 48" fill="none"><rect x="14" y="10" width="20" height="28" rx="4" fill="currentColor" opacity=".18"/><path d="M18 18h12M18 24h12M18 30h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="gallery__thumbs">
+          <button class="gallery__thumb tile--pain is-active" data-thumb><svg viewBox="0 0 48 48" fill="none"><rect x="14" y="10" width="20" height="28" rx="4" fill="currentColor" opacity=".18"/><path d="M18 18h12M18 24h12M18 30h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          <button class="gallery__thumb tile--pain" data-thumb><svg viewBox="0 0 48 48" fill="none"><rect x="16" y="16" width="16" height="16" rx="3" fill="currentColor" opacity=".18"/><path d="M20 24h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          <button class="gallery__thumb tile--pain" data-thumb><svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="10" fill="currentColor" opacity=".18"/><path d="M19 24h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          <button class="gallery__thumb tile--pain" data-thumb><svg viewBox="0 0 48 48" fill="none"><path d="M16 16h16v16H16z" fill="currentColor" opacity=".18"/><path d="M20 20l8 8m0-8l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+        </div>
+      </div>
+
+      <!-- =========================================================
+           PRODUCT INFO — hierarchy: category → name → meta → price
+           → seller → CTA → quantity/add-to-cart → delivery
+      ========================================================= -->
+      <div data-group="product-info">
+        <span class="product-info__category">Pain Relief/Fever</span>
+        <h1 class="product-info__name">Paracetamol 500mg 10 Tablets</h1>
+
+        <div class="product-info__meta-row">
+          <span class="rating"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.5l1.9 4.2 4.6.5-3.5 3 1 4.5L8 11.5 3.9 13.7l1-4.5-3.5-3 4.6-.5L8 1.5z"/></svg>4.8 <span class="rating__count">(320 reviews)</span></span>
+          <span class="badge badge--stock-ok">In Stock</span>
+        </div>
+
+        <div class="product-info__price-block">
+          <span class="product-info__price">฿25</span>
+          <span class="product-info__price-was">฿35</span>
+          <span class="product-info__save">Save 29%</span>
+        </div>
+
+        <!-- Pharmacy seller card -->
+        <div class="card seller-card" data-group="seller-card">
+          <div class="seller-card__avatar">SD</div>
+          <div class="seller-card__body">
+            <div class="seller-card__name-row">
+              <span class="seller-card__name">SafeCare Pharmacy</span>
+              <span class="badge badge--verified"><svg viewBox="0 0 12 12" fill="none"><path d="M2.5 6l2 2 4.5-4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Verified Pharmacy</span>
+            </div>
+            <div class="seller-card__meta">Sukhumvit Branch · 6 years in service · Store rating 4.9</div>
+          </div>
+          <div class="seller-card__actions">
+            <a href="chat.html" class="btn btn--outline btn--sm">
+              <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2 3h11v7H6l-3 3v-3H2V3z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+              Chat with Pharmacist
+            </a>
+          </div>
+        </div>
+
+        <!-- Quantity + Add to cart -->
+        <div class="purchase-row" data-group="purchase">
+          <div class="qty-stepper">
+            <button type="button" data-qty-minus aria-label="Decrease quantity">−</button>
+            <input type="text" value="1" inputmode="numeric" data-qty-input aria-label="Quantity">
+            <button type="button" data-qty-plus aria-label="Increase quantity">+</button>
+          </div>
+          <button class="btn btn--primary btn--lg" data-add-to-cart>Add to Cart — ฿25</button>
+        </div>
+        <p class="stock-line">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 2l6 3.5v4L7.5 13 1.5 9.5v-4L7.5 2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+          42 left in stock · Limit 10 per order
+        </p>
+
+        <!-- Delivery information -->
+        <div class="delivery-info" data-group="delivery">
+          <div class="delivery-info__row">
+            <svg viewBox="0 0 18 18" fill="none"><rect x="1.5" y="5" width="10" height="8" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M11.5 8h3l2 2.5V13h-5V8z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><circle cx="5" cy="14.5" r="1.3" stroke="currentColor" stroke-width="1.1"/><circle cx="13.5" cy="14.5" r="1.3" stroke="currentColor" stroke-width="1.1"/></svg>
+            <div><strong>Delivered to you within 45–90 minutes</strong><span>From the Sukhumvit branch</span></div>
+          </div>
+          <div class="delivery-info__row">
+            <svg viewBox="0 0 18 18" fill="none"><path d="M3 5h12v9H3z" stroke="currentColor" stroke-width="1.3"/><path d="M3 5l6 5 6-5" stroke="currentColor" stroke-width="1.3"/></svg>
+            <div><strong>Delivery starts at ฿20</strong><span>Free delivery on orders over ฿300</span></div>
+          </div>
+          <div class="delivery-info__row">
+            <svg viewBox="0 0 18 18" fill="none"><path d="M9 2l6 2.5v4c0 4-2.5 6.5-6 7.5-3.5-1-6-3.5-6-7.5v-4L9 2z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+            <div><strong>Checked by a pharmacist before every delivery</strong><span>For your safety</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================================================
+         PRODUCT INFORMATION TABS
+    ========================================================= -->
+    <div class="info-tabs" data-group="info-tabs">
+      <div class="info-tabs__nav">
+        <button class="info-tabs__btn is-active" data-tab="desc">Description</button>
+        <button class="info-tabs__btn" data-tab="usage">Usage & Warnings</button>
+        <button class="info-tabs__btn" data-tab="reviews">Reviews (320)</button>
+      </div>
+
+      <div class="info-tabs__panel is-active" data-panel="desc">
+        <h4>Indications</h4>
+        <p>Relieves headaches, muscle aches, and reduces fever. Suitable for adults and children aged 12 and up.</p>
+        <h4>Key Ingredient</h4>
+        <p>Paracetamol 500mg per tablet</p>
+        <h4>Storage</h4>
+        <p>Store in a dry place below 30°C, away from sunlight and out of reach of children</p>
+      </div>
+
+      <div class="info-tabs__panel" data-panel="usage">
+        <h4>Directions for Use</h4>
+        <ul>
+          <li>Take 1–2 tablets every 4–6 hours as needed</li>
+          <li>Do not exceed 8 tablets in 24 hours</li>
+          <li>Take with a full glass of water</li>
+        </ul>
+        <h4>Warnings</h4>
+        <ul>
+          <li>Do not use if allergic to paracetamol</li>
+          <li>Patients with liver conditions should consult a pharmacist before use</li>
+          <li>If adverse effects occur, stop use and see a doctor</li>
+        </ul>
+      </div>
+
+      <div class="info-tabs__panel" data-panel="reviews">
+        <p>Detailed reviews aren't shown in this preview — connect a real review system once the backend is built</p>
+      </div>
+    </div>
+
+    <!-- =========================================================
+         RELATED PRODUCTS
+    ========================================================= -->
+    <section class="related" data-group="related">
+      <div class="section-head">
+        <h2>Related Products</h2>
+        <a href="index.html" class="section-head__link">View All</a>
+      </div>
+      <div class="product-grid">
+        <article class="card product-card">
+          <div class="product-card__media tile--pain"><svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="10" fill="currentColor" opacity=".18"/><path d="M19 24h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+          <div class="product-card__body">
+            <span class="product-card__category">Pain Relief/Fever</span>
+            <h3 class="product-card__name">Ibuprofen 400mg 10 Tablets</h3>
+            <div class="product-card__price-row"><span class="product-card__price">฿32</span></div>
+            <div class="product-card__actions"><a href="product.html" class="btn btn--outline btn--sm">View Details</a></div>
+          </div>
+        </article>
+        <article class="card product-card">
+          <div class="product-card__media tile--pain"><svg viewBox="0 0 48 48" fill="none"><path d="M16 16h16v16H16z" fill="currentColor" opacity=".18"/><path d="M20 20l8 8m0-8l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+          <div class="product-card__body">
+            <span class="product-card__category">Pain Relief/Fever</span>
+            <h3 class="product-card__name">Pain Relief Patches, 5 Pack</h3>
+            <div class="product-card__price-row"><span class="product-card__price">฿65</span></div>
+            <div class="product-card__actions"><a href="product.html" class="btn btn--outline btn--sm">View Details</a></div>
+          </div>
+        </article>
+        <article class="card product-card">
+          <div class="product-card__media tile--vitamin"><svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="11" fill="currentColor" opacity=".18"/><path d="M18 24a6 6 0 1112 0 6 6 0 01-12 0zM24 18v12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+          <div class="product-card__body">
+            <span class="product-card__category">Vitamins/Supplements</span>
+            <h3 class="product-card__name">Vitamin B Complex 30 Tablets</h3>
+            <div class="product-card__price-row"><span class="product-card__price">฿145</span></div>
+            <div class="product-card__actions"><a href="product.html" class="btn btn--outline btn--sm">View Details</a></div>
+          </div>
+        </article>
+        <article class="card product-card">
+          <div class="product-card__media tile--respiratory"><svg viewBox="0 0 48 48" fill="none"><path d="M24 12v10M24 22a6 6 0 00-6 6v2a4 4 0 004 4M24 22a6 6 0 016 6v2a4 4 0 01-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+          <div class="product-card__body">
+            <span class="product-card__category">Respiratory</span>
+            <h3 class="product-card__name">Cough Relief Lozenges 24 Pack</h3>
+            <div class="product-card__price-row"><span class="product-card__price">฿55</span></div>
+            <div class="product-card__actions"><a href="product.html" class="btn btn--outline btn--sm">View Details</a></div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="container footer__inner">
+    <a href="index.html" class="pm-logo">
+      <svg class="pm-logo__mark" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="9" fill="#1D7A63"/><path d="M16 9v14M9 16h14" stroke="#FDFBF6" stroke-width="3.4" stroke-linecap="round"/><circle cx="23.5" cy="8.5" r="3" fill="#DB8B2C"/></svg>
+      <span class="pm-logo__word">Panmacy</span>
+    </a>
+    <div class="footer__cols">
+      <div class="footer__col"><h4>Products</h4><ul><li><a href="index.html">Browse Products</a></li><li><a href="cart.html">My Cart</a></li></ul></div>
+      <div class="footer__col"><h4>Community</h4><ul><li><a href="forum.html">Health Forum</a></li><li><a href="chat.html">Pharmacist Chat</a></li></ul></div>
+      <div class="footer__col"><h4>Account</h4><ul><li><a href="login.html">Log In</a></li><li><a href="signup.html">Sign Up</a></li></ul></div>
+    </div>
+  </div>
+  <div class="container"><p class="footer__note">© 2026 Panmacy. Every medicine purchase should follow a pharmacist's guidance</p></div>
+</footer>
+
+
+
+<!-- Forum popup (Facebook-style) -->
+<div class="modal-backdrop" id="modal-forum" role="dialog" aria-modal="true" aria-labelledby="forum-modal-title">
+  <div class="modal modal--fb">
+    <div class="modal__header">
+      <h2 class="modal__title" id="forum-modal-title">Create post</h2>
+      <button type="button" class="modal__close" data-modal-close aria-label="Close">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <form id="forum-composer-form">
+      <div class="modal__body">
+        <div class="fb-post-composer">
+          <div class="avatar">N</div>
+          <textarea class="fb-post-input" name="content" placeholder="What's on your mind, Nattawat?" required></textarea>
+        </div>
+        <div class="fb-post-actions">
+          <button type="button" class="fb-post-action">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="3" width="14" height="12" rx="2" stroke="#45BD62" stroke-width="1.4"/><circle cx="6.5" cy="7.5" r="1.5" fill="#45BD62"/><path d="M2 12l3.5-3.5 2.5 2.5 3-3.5L16 12" stroke="#45BD62" stroke-width="1.4" stroke-linejoin="round"/></svg>
+            Photo
+          </button>
+          <button type="button" class="fb-post-action">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 14V5a1 1 0 011-1h4l1.5 2H14a1 1 0 011 1v7a1 1 0 01-1 1H4a1 1 0 01-1-1z" stroke="#F7B928" stroke-width="1.4" stroke-linejoin="round"/></svg>
+            Tag
+          </button>
+          <button type="button" class="fb-post-action">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6.5" stroke="#F5533D" stroke-width="1.4"/><path d="M6 10.5c.8 1 1.9 1.5 3 1.5s2.2-.5 3-1.5M7 7.5h.01M11 7.5h.01" stroke="#F5533D" stroke-width="1.4" stroke-linecap="round"/></svg>
+            Feeling
+          </button>
+        </div>
+      </div>
+      <div class="modal__footer">
+        <button type="button" class="btn btn--ghost" data-modal-close>Cancel</button>
+        <button type="submit" class="btn btn--primary">Post</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- New Thread popup -->
+<div class="modal-backdrop" id="modal-new-thread" role="dialog" aria-modal="true" aria-labelledby="thread-modal-title">
+  <div class="modal modal--lg">
+    <div class="modal__header">
+      <h2 class="modal__title" id="thread-modal-title">Start a new thread</h2>
+      <button type="button" class="modal__close" data-modal-close aria-label="Close">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <form id="new-thread-form">
+      <div class="modal__body">
+        <div class="field" style="margin-bottom:16px">
+          <label class="field__label" for="thread-title">Title</label>
+          <input type="text" id="thread-title" name="title" class="input" placeholder="e.g. Is it safe to take ibuprofen with antibiotics?" required>
+        </div>
+        <div class="field" style="margin-bottom:16px">
+          <label class="field__label" for="thread-category">Category</label>
+          <select id="thread-category" name="category" class="select" style="width:100%;height:46px">
+            <option>General Health</option>
+            <option>Pain Relief / Fever</option>
+            <option>Cold &amp; Flu</option>
+            <option>Allergy</option>
+            <option>Digestive</option>
+            <option>Skin Care</option>
+            <option>Medication FAQ</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field__label" for="thread-body">Your question or discussion</label>
+          <textarea id="thread-body" name="body" class="input" style="height:140px;padding-top:12px;resize:vertical" placeholder="Describe your question in detail..." required></textarea>
+        </div>
+      </div>
+      <div class="modal__footer">
+        <button type="button" class="btn btn--ghost" data-modal-close>Cancel</button>
+        <button type="submit" class="btn btn--primary">Post thread</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="js/main.js"></script>
+<script src="js/pages/product.js"></script>
+</body>
+</html>

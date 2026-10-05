@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shopping Cart — Panmacy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/variables.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/pages/products.css">
+<link rel="stylesheet" href="css/pages/product.css">
+<link rel="stylesheet" href="css/pages/cart.css">
+</head>
+<body>
+
+<header class="navbar">
+  <div class="container navbar__inner">
+    <a href="index.html" class="pm-logo">
+      <svg class="pm-logo__mark" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="9" fill="#1D7A63"/><path d="M16 9v14M9 16h14" stroke="#FDFBF6" stroke-width="3.4" stroke-linecap="round"/><circle cx="23.5" cy="8.5" r="3" fill="#DB8B2C"/></svg>
+      <span class="pm-logo__word">Panmacy</span>
+    </a>
+    <nav class="navbar__links" data-nav-drawer aria-label="Main menu">
+      <a href="index.html" class="navbar__link">Browse Products</a>
+      <a href="forum.html" class="navbar__link">Health Forum</a>
+      <a href="chat.html" class="navbar__link">Pharmacist Chat</a>
+    </nav>
+    <div class="navbar__actions">
+      <a href="cart.html" class="navbar__icon-btn is-active" aria-label="Shopping Cart">
+        <svg width="19" height="19" viewBox="0 0 19 19" fill="none"><path d="M3 4h1.6L6 12.5a1.5 1.5 0 001.5 1.2h6a1.5 1.5 0 001.5-1.2L16 6.5H5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7.5" cy="16" r="1.1" fill="currentColor"/><circle cx="13.5" cy="16" r="1.1" fill="currentColor"/></svg>
+        <span class="navbar__badge" data-cart-badge>3</span>
+      </a>
+            <div class="navbar__profile">
+        <button type="button" class="navbar__avatar" data-profile-toggle aria-expanded="false" aria-label="My Account" aria-haspopup="true">N</button>
+        <div class="dropdown-menu" data-profile-menu role="menu">
+          <div class="dropdown-menu__header">
+            <div class="dropdown-menu__name">Nattawat S.</div>
+            <div class="dropdown-menu__email">nattawat@email.com</div>
+          </div>
+          <a href="profile.html" class="dropdown-item" role="menuitem">
+            <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5.5" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M3 13.5c0-2.5 2.2-4 5-4s5 1.5 5 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            Profile
+          </a>
+          <a href="orders.html" class="dropdown-item" role="menuitem">
+            <svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12v9a1 1 0 01-1 1H3a1 1 0 01-1-1V4zM5 4V3a3 3 0 016 0v1" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+            View Orders
+          </a>
+          <div class="dropdown-submenu">
+            <button type="button" class="dropdown-item dropdown-submenu__toggle" data-submenu-toggle role="menuitem">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M2 6l1-3h10l1 3M2 6v7a1 1 0 001 1h10a1 1 0 001-1V6M2 6h12" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+              Pharmacy
+            </button>
+            <div class="dropdown-submenu__list">
+              <a href="pharmacy-signup.html" class="dropdown-item" role="menuitem">Sign up (if not owned)</a>
+              <a href="pharmacy-dashboard.html" class="dropdown-item" role="menuitem">View owned shop</a>
+            </div>
+          </div>
+          <div class="dropdown-divider"></div>
+          <a href="login.html" class="dropdown-item dropdown-item--danger" role="menuitem">
+            <svg viewBox="0 0 16 16" fill="none"><path d="M6 3H3.5A1.5 1.5 0 002 4.5v7A1.5 1.5 0 003.5 13H6M10 11l3-3-3-3M13 8H6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Sign out
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="container page-body">
+    <h1>Shopping Cart</h1>
+
+    <div class="cart-layout">
+
+      <!-- =========================================================
+           CART ITEMS — grouped by pharmacy
+      ========================================================= -->
+      <section data-group="cart-items">
+
+        <div class="pharmacy-group">
+          <div class="pharmacy-group__head">
+            <input type="checkbox" checked aria-label="Select all items from this pharmacy">
+            <div class="pharmacy-group__icon"><svg viewBox="0 0 16 16" fill="none"><path d="M2 6l1-3h10l1 3M2 6v7a1 1 0 001 1h10a1 1 0 001-1V6M2 6h12" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></div>
+            <span class="pharmacy-group__name">SafeCare Pharmacy — Sukhumvit Branch</span>
+            <span class="pharmacy-group__delivery">Estimated delivery in 45–90 minutes</span>
+          </div>
+          <div class="pharmacy-group__items">
+            <div class="cart-item" data-item data-price="25" data-pharmacy="SafeCare Pharmacy">
+              <div class="cart-item__media tile--pain"><svg viewBox="0 0 48 48" fill="none"><rect x="14" y="10" width="20" height="28" rx="4" fill="currentColor" opacity=".18"/><path d="M18 18h12M18 24h12M18 30h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+              <div class="cart-item__body">
+                <div class="cart-item__name">Paracetamol 500mg 10 Tablets</div>
+                <div class="cart-item__meta">฿25 each</div>
+              </div>
+              <div class="cart-item__controls">
+                <div class="qty-stepper qty-stepper--sm">
+                  <button type="button" data-qty-minus aria-label="Decrease quantity">−</button>
+                  <input type="text" value="2" data-qty-input aria-label="Quantity">
+                  <button type="button" data-qty-plus aria-label="Increase quantity">+</button>
+                </div>
+                <span class="cart-item__line-total" data-line-total>฿50</span>
+                <button class="icon-btn cart-item__remove" data-remove-item aria-label="Remove item"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2.5 4h10M5.5 4V2.5h4V4M6 7v4M9 7v4M3.5 4l.6 8a1 1 0 001 .9h4l1-.9.6-8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              </div>
+            </div>
+
+            <div class="cart-item" data-item data-price="95" data-pharmacy="SafeCare Pharmacy">
+              <div class="cart-item__media tile--baby"><svg viewBox="0 0 48 48" fill="none"><rect x="16" y="14" width="16" height="22" rx="5" fill="currentColor" opacity=".18"/><path d="M20 20h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+              <div class="cart-item__body">
+                <div class="cart-item__name">Kids' Fever Reducer Syrup, Fruit Flavor 60ml</div>
+                <div class="cart-item__meta">฿95 each</div>
+              </div>
+              <div class="cart-item__controls">
+                <div class="qty-stepper qty-stepper--sm">
+                  <button type="button" data-qty-minus aria-label="Decrease quantity">−</button>
+                  <input type="text" value="1" data-qty-input aria-label="Quantity">
+                  <button type="button" data-qty-plus aria-label="Increase quantity">+</button>
+                </div>
+                <span class="cart-item__line-total" data-line-total>฿95</span>
+                <button class="icon-btn cart-item__remove" data-remove-item aria-label="Remove item"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2.5 4h10M5.5 4V2.5h4V4M6 7v4M9 7v4M3.5 4l.6 8a1 1 0 001 .9h4l1-.9.6-8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pharmacy-group">
+          <div class="pharmacy-group__head">
+            <input type="checkbox" checked aria-label="Select all items from this pharmacy">
+            <div class="pharmacy-group__icon"><svg viewBox="0 0 16 16" fill="none"><path d="M2 6l1-3h10l1 3M2 6v7a1 1 0 001 1h10a1 1 0 001-1V6M2 6h12" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></div>
+            <span class="pharmacy-group__name">Wellspring Pharmacy — Asoke Branch</span>
+            <span class="pharmacy-group__delivery">Estimated delivery in 1–2 hours</span>
+          </div>
+          <div class="pharmacy-group__items">
+            <div class="cart-item" data-item data-price="320" data-pharmacy="Wellspring Pharmacy">
+              <div class="cart-item__media tile--skin"><svg viewBox="0 0 48 48" fill="none"><rect x="20" y="10" width="8" height="26" rx="4" fill="currentColor" opacity=".18"/><path d="M20 20h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+              <div class="cart-item__body">
+                <div class="cart-item__name">Gentle Facial Moisturizer 30g</div>
+                <div class="cart-item__meta">฿320 each</div>
+              </div>
+              <div class="cart-item__controls">
+                <div class="qty-stepper qty-stepper--sm">
+                  <button type="button" data-qty-minus aria-label="Decrease quantity">−</button>
+                  <input type="text" value="1" data-qty-input aria-label="Quantity">
+                  <button type="button" data-qty-plus aria-label="Increase quantity">+</button>
+                </div>
+                <span class="cart-item__line-total" data-line-total>฿320</span>
+                <button class="icon-btn cart-item__remove" data-remove-item aria-label="Remove item"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2.5 4h10M5.5 4V2.5h4V4M6 7v4M9 7v4M3.5 4l.6 8a1 1 0 001 .9h4l1-.9.6-8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================================
+           ORDER SUMMARY — price breakdown, checkout
+      ========================================================= -->
+      <aside class="card summary-card" data-group="order-summary">
+        <h3>Order Summary</h3>
+
+        <div class="promo-row">
+          <input type="text" class="input" placeholder="Enter discount code">
+          <button class="btn btn--outline btn--sm">Apply</button>
+        </div>
+
+        <div class="summary-row"><span>Items (3)</span><strong data-summary-subtotal>฿465</strong></div>
+        <div class="summary-row"><span>Delivery (2 pharmacies)</span><strong>฿40</strong></div>
+        <div class="summary-row discount"><span>Discount</span><strong>−฿0</strong></div>
+
+        <div class="summary-total">
+          <span>Order Total</span>
+          <span data-summary-total>฿505</span>
+        </div>
+
+        <a href="payment-success.html" class="btn btn--primary btn--lg btn--block" style="margin-top: var(--sp-5);">Proceed to Checkout</a>
+        <a href="index.html" class="btn btn--ghost btn--block" style="margin-top: var(--sp-2);">Continue Shopping</a>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="container"><p class="footer__note">© 2026 Panmacy. Every medicine purchase should follow a pharmacist's guidance</p></div>
+</footer>
+
+
+
+<!-- Forum popup (Facebook-style) -->
+<div class="modal-backdrop" id="modal-forum" role="dialog" aria-modal="true" aria-labelledby="forum-modal-title">
+  <div class="modal modal--fb">
+    <div class="modal__header">
+      <h2 class="modal__title" id="forum-modal-title">Create post</h2>
+      <button type="button" class="modal__close" data-modal-close aria-label="Close">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <form id="forum-composer-form">
+      <div class="modal__body">
+        <div class="fb-post-composer">
+          <div class="avatar">N</div>
+          <textarea class="fb-post-input" name="content" placeholder="What's on your mind, Nattawat?" required></textarea>
+        </div>
+        <div class="fb-post-actions">
+          <button type="button" class="fb-post-action">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="3" width="14" height="12" rx="2" stroke="#45BD62" stroke-width="1.4"/><circle cx="6.5" cy="7.5" r="1.5" fill="#45BD62"/><path d="M2 12l3.5-3.5 2.5 2.5 3-3.5L16 12" stroke="#45BD62" stroke-width="1.4" stroke-linejoin="round"/></svg>
+            Photo
+          </button>
+          <button type="button" class="fb-post-action">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 14V5a1 1 0 011-1h4l1.5 2H14a1 1 0 011 1v7a1 1 0 01-1 1H4a1 1 0 01-1-1z" stroke="#F7B928" stroke-width="1.4" stroke-linejoin="round"/></svg>
+            Tag
+          </button>
+          <button type="button" class="fb-post-action">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6.5" stroke="#F5533D" stroke-width="1.4"/><path d="M6 10.5c.8 1 1.9 1.5 3 1.5s2.2-.5 3-1.5M7 7.5h.01M11 7.5h.01" stroke="#F5533D" stroke-width="1.4" stroke-linecap="round"/></svg>
+            Feeling
+          </button>
+        </div>
+      </div>
+      <div class="modal__footer">
+        <button type="button" class="btn btn--ghost" data-modal-close>Cancel</button>
+        <button type="submit" class="btn btn--primary">Post</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- New Thread popup -->
+<div class="modal-backdrop" id="modal-new-thread" role="dialog" aria-modal="true" aria-labelledby="thread-modal-title">
+  <div class="modal modal--lg">
+    <div class="modal__header">
+      <h2 class="modal__title" id="thread-modal-title">Start a new thread</h2>
+      <button type="button" class="modal__close" data-modal-close aria-label="Close">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <form id="new-thread-form">
+      <div class="modal__body">
+        <div class="field" style="margin-bottom:16px">
+          <label class="field__label" for="thread-title">Title</label>
+          <input type="text" id="thread-title" name="title" class="input" placeholder="e.g. Is it safe to take ibuprofen with antibiotics?" required>
+        </div>
+        <div class="field" style="margin-bottom:16px">
+          <label class="field__label" for="thread-category">Category</label>
+          <select id="thread-category" name="category" class="select" style="width:100%;height:46px">
+            <option>General Health</option>
+            <option>Pain Relief / Fever</option>
+            <option>Cold &amp; Flu</option>
+            <option>Allergy</option>
+            <option>Digestive</option>
+            <option>Skin Care</option>
+            <option>Medication FAQ</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field__label" for="thread-body">Your question or discussion</label>
+          <textarea id="thread-body" name="body" class="input" style="height:140px;padding-top:12px;resize:vertical" placeholder="Describe your question in detail..." required></textarea>
+        </div>
+      </div>
+      <div class="modal__footer">
+        <button type="button" class="btn btn--ghost" data-modal-close>Cancel</button>
+        <button type="submit" class="btn btn--primary">Post thread</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="js/main.js"></script>
+<script src="js/pages/cart.js"></script>
+</body>
+</html>
