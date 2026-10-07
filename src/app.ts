@@ -1,7 +1,7 @@
 import express from "express";
 import session from "express-session";
 import path from "path";
-import {homepage} from "./controllers/controll"
+import {homepage , login} from "./controllers/controll"
 
 const app = express();
 const PORT = 3000;
@@ -21,6 +21,8 @@ app.use(
 
 // หน้าแรก
 app.get("/",homepage);
+
+app.get("/login",login);
 
 // Start server
 app.listen(PORT, () => {
