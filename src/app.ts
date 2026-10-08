@@ -1,7 +1,8 @@
 import express from "express";
 import session from "express-session";
 import path from "path";
-import {homepage , login , forum , cart , profile , orders , admin , pharmacist_signup , pharmacy_dashboard} from "./controllers/controll"
+import {homepage , login , forum , cart , profile , orders , admin , pharmacist_signup , pharmacy_dashboard , createUser} from "./controllers/controll"
+import {Connection_status} from "./models/db";
 
 const app = express();
 const PORT = 3000;
@@ -24,7 +25,8 @@ app.use((req, res, next) => {
     next();
 });
 
-// หน้าแรก
+Connection_status();  // ใช้ run function ใน db.ts เฉยๆใช้ตรงนี้เเล้วดูรกๆ
+
 app.get("/",homepage);
 
 app.get("/admin",admin);
@@ -43,7 +45,8 @@ app.get("/pharmacist-signup",pharmacist_signup);
 
 app.get("/pharmacy-dashboard",pharmacy_dashboard);
 
-// Start server
+app.post("/users", createUser);
+
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
 });
