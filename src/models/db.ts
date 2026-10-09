@@ -4,7 +4,7 @@ export const db = database.createPool({
     host:"localhost",
     user:"root",
     password:"",
-    database:"test_sql",
+    database:"test",
     port:3306
 });
 
