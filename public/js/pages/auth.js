@@ -32,11 +32,4 @@
     pwInput.addEventListener('input', validateConfirm);
   }
 
-  // Prevent demo forms from navigating away
-  document.querySelectorAll('form').forEach((form) => {
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      window.pmToast('เดโม: ยังไม่ได้เชื่อมต่อระบบสมาชิกจริง');
-    });
-  });
 })();

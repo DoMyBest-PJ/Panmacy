@@ -2,8 +2,12 @@ import {Request , Response} from "express";
 import { db } from "../models/db";
 
 export async function homepage(req:Request, res:Response){
-    const [rows] = await db.query("SELECT * FROM customer");
-    console.log("Start Home Page Send user row : ",rows)
+    const [rows] = await db.execute("SELECT * FROM customer");
+    console.log("Start Home Page Send user row : ",rows);
+    console.log(req.session.userID);
+    console.log(req.session.userType);
+    console.log(req.session.tempMsg);
+    req.session.tempMsg = "";
     res.render("index",{activePage:1});
 }
 
@@ -12,7 +16,7 @@ export function forum(req:Request, res:Response){
 }
 
 export function login(req:Request, res:Response){
-    res.render("login");
+    res.render("login",{msg : req.session.tempMsg});
 }
 
 export function cart(req:Request, res:Response){
@@ -39,12 +43,24 @@ export function pharmacy_dashboard(req:Request , res:Response){
     res.render("pharmacy-dashboard")
 }
 
-export async function createUser(req: Request, res: Response) {
-    const { name, email } = req.body;
+export async function loginUser(req: Request, res: Response) {
+    try{
+        const { email, password } = req.body;
+        const [rows]:any = await db.execute("SELECT cid,email,password FROM customer WHERE email = ?",
+            [email]
+        );
 
-    await db.query(
-        "INSERT INTO customer (name, email) VALUES (?, ?)",
-        [name, email]
-    );
-    res.redirect("/");
+        if (rows.length === 0 || password != rows[2]) {
+            req.session.tempMsg = "Invaild Email or Password.";
+        }
+
+        req.session.userID = rows[0].cid;
+        req.session.userType = "Customer";
+
+        return res.redirect("/");
+    }catch(e){
+        return res.redirect("/login");
+    }
 }
+
+    

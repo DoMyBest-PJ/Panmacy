@@ -1,112 +1,233 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Panmacy — Log In</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/variables.css">
-<link rel="stylesheet" href="css/base.css">
-<link rel="stylesheet" href="css/components.css">
-<link rel="stylesheet" href="css/pages/auth.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Log In — Panmacy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/variables.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/pages/auth.css" />
+  </head>
+  <body>
+    <%- include("element/nav") %>
 
-<%- include("element/nav") %>
-
-<main class="auth-shell">
-
-  <!-- =========================================================
+    <main class="auth-shell">
+      <!-- =========================================================
        DECORATIVE BRAND PANEL
   ========================================================= -->
-  <section class="auth-panel" data-group="auth-illustration" aria-hidden="true">
-    <div class="auth-panel__top">
-      <span class="pm-logo__word">Panmacy</span>
-    </div>
+      <section
+        class="auth-panel"
+        data-group="auth-illustration"
+        aria-hidden="true"
+      >
+        <div class="auth-panel__top">
+          <span class="pm-logo__word">Panmacy</span>
+        </div>
 
-    <div class="auth-panel__illustration">
-      <svg viewBox="0 0 320 260" fill="none">
-        <ellipse cx="160" cy="235" rx="120" ry="14" fill="rgba(0,0,0,.15)"/>
-        <rect x="100" y="70" width="120" height="150" rx="18" fill="#FDFBF6"/>
-        <rect x="100" y="70" width="120" height="40" rx="18" fill="#DB8B2C"/>
-        <rect x="100" y="92" width="120" height="18" fill="#DB8B2C"/>
-        <path d="M138 145h44M160 123v44" stroke="#1D7A63" stroke-width="7" stroke-linecap="round"/>
-        <circle cx="235" cy="150" r="26" fill="#279B7D"/>
-        <path d="M226 150l6 6 12-13" stroke="#FDFBF6" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle cx="72" cy="120" r="18" fill="#E3F1EA"/>
-        <path d="M64 120a8 8 0 1116 0 8 8 0 01-16 0z" stroke="#1D7A63" stroke-width="2.5"/>
-        <circle cx="85" cy="185" r="10" fill="#DB8B2C" opacity=".7"/>
-        <circle cx="245" cy="90" r="7" fill="#FDFBF6" opacity=".6"/>
-      </svg>
-    </div>
+        <div class="auth-panel__illustration">
+          <svg viewBox="0 0 320 260" fill="none">
+            <ellipse
+              cx="160"
+              cy="235"
+              rx="120"
+              ry="14"
+              fill="rgba(0,0,0,.15)"
+            />
+            <rect
+              x="100"
+              y="70"
+              width="120"
+              height="150"
+              rx="18"
+              fill="#FDFBF6"
+            />
+            <rect
+              x="100"
+              y="70"
+              width="120"
+              height="40"
+              rx="18"
+              fill="#DB8B2C"
+            />
+            <rect x="100" y="92" width="120" height="18" fill="#DB8B2C" />
+            <path
+              d="M138 145h44M160 123v44"
+              stroke="#1D7A63"
+              stroke-width="7"
+              stroke-linecap="round"
+            />
+            <circle cx="235" cy="150" r="26" fill="#279B7D" />
+            <path
+              d="M226 150l6 6 12-13"
+              stroke="#FDFBF6"
+              stroke-width="3.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <circle cx="72" cy="120" r="18" fill="#E3F1EA" />
+            <path
+              d="M64 120a8 8 0 1116 0 8 8 0 01-16 0z"
+              stroke="#1D7A63"
+              stroke-width="2.5"
+            />
+            <circle cx="85" cy="185" r="10" fill="#DB8B2C" opacity=".7" />
+            <circle cx="245" cy="90" r="7" fill="#FDFBF6" opacity=".6" />
+          </svg>
+        </div>
 
-    <div>
-      <div class="auth-panel__copy">
-        <h2>Good health, just a few clicks away</h2>
-        <p>Log in to order medicine, track orders, and consult verified pharmacists instantly</p>
-      </div>
-      <div class="auth-panel__stats">
-        <div class="auth-panel__stat"><strong>120+</strong><span>Partner Pharmacies</span></div>
-        <div class="auth-panel__stat"><strong>4.8★</strong><span>Satisfaction Rating</span></div>
-        <div class="auth-panel__stat"><strong>24/7</strong><span>Consultation Service</span></div>
-      </div>
-    </div>
-  </section>
+        <div>
+          <div class="auth-panel__copy">
+            <h2>Good health, just a few clicks away</h2>
+            <p>
+              Log in to order medicine, track orders, and consult verified
+              pharmacists instantly
+            </p>
+          </div>
+          <div class="auth-panel__stats">
+            <div class="auth-panel__stat">
+              <strong>120+</strong><span>Partner Pharmacies</span>
+            </div>
+            <div class="auth-panel__stat">
+              <strong>4.8★</strong><span>Satisfaction Rating</span>
+            </div>
+            <div class="auth-panel__stat">
+              <strong>24/7</strong><span>Consultation Service</span>
+            </div>
+          </div>
+        </div>
+      </section>
 
-  <!-- =========================================================
+      <!-- =========================================================
        LOGIN FORM
   ========================================================= -->
-  <section class="auth-form-col">
-    <div class="card auth-card" data-group="login-form">
-      <div class="auth-card__head">
-        <h1>Welcome back</h1>
-        <p>Log in to continue with your account</p>
-      </div>
-
-      <form novalidate>
-        <div class="field">
-          <label class="field__label" for="email">Email</label>
-          <div class="input-wrap">
-            <svg class="leading-icon" viewBox="0 0 20 20" fill="none"><rect x="2.5" y="4.5" width="15" height="11" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M3 5.5l7 5 7-5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-            <input class="input has-icon" type="email" id="email" placeholder="you@example.com" value="">
+      <section class="auth-form-col">
+        <div class="card auth-card" data-group="login-form">
+          <div class="auth-card__head">
+            <h1>Welcome back</h1>
+            <p>Log in to continue with your account</p>
           </div>
-        </div>
 
-        <div class="field">
-          <div class="field-row-between">
-            <label class="field__label" for="password">Password</label>
-            <a href="#" class="link-sm">Forgot password?</a>
-          </div>
-          <div class="input-wrap">
-            <svg class="leading-icon" viewBox="0 0 20 20" fill="none"><rect x="4" y="9" width="12" height="8" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M6.5 9V6.5a3.5 3.5 0 017 0V9" stroke="currentColor" stroke-width="1.4"/></svg>
-            <input class="input has-icon has-trailing" type="password" id="password" placeholder="••••••••" data-password-input>
-            <button type="button" class="trailing-btn" data-password-toggle aria-label="Show password">
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" data-eye-icon><path d="M1.5 9S4 4 9 4s7.5 5 7.5 5-2.5 5-7.5 5S1.5 9 1.5 9z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><circle cx="9" cy="9" r="2.2" stroke="currentColor" stroke-width="1.3"/></svg>
+          <form novalidate action="/user-login" method="post">
+            <div class="field">
+              <label class="field__label" for="email">Email</label>
+              <div class="input-wrap">
+                <svg class="leading-icon" viewBox="0 0 20 20" fill="none">
+                  <rect
+                    x="2.5"
+                    y="4.5"
+                    width="15"
+                    height="11"
+                    rx="2"
+                    stroke="currentColor"
+                    stroke-width="1.4"
+                  />
+                  <path
+                    d="M3 5.5l7 5 7-5"
+                    stroke="currentColor"
+                    stroke-width="1.4"
+                    stroke-linecap="round"
+                  />
+                </svg>
+                <input
+                  class="input has-icon"
+                  type="email"
+                  id="email"
+                  placeholder="you@example.com"
+                  value=""
+                  name="email"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="field">
+              <div class="field-row-between">
+                <label class="field__label" for="password">Password</label>
+              </div>
+              <div class="input-wrap">
+                <svg class="leading-icon" viewBox="0 0 20 20" fill="none">
+                  <rect
+                    x="4"
+                    y="9"
+                    width="12"
+                    height="8"
+                    rx="2"
+                    stroke="currentColor"
+                    stroke-width="1.4"
+                  />
+                  <path
+                    d="M6.5 9V6.5a3.5 3.5 0 017 0V9"
+                    stroke="currentColor"
+                    stroke-width="1.4"
+                  />
+                </svg>
+                <input
+                  class="input has-icon has-trailing"
+                  type="password"
+                  id="password"
+                  placeholder="••••••••"
+                  data-password-input
+                  name="password"
+                  required
+                />
+                <button
+                  type="button"
+                  class="trailing-btn"
+                  data-password-toggle
+                  aria-label="Show password"
+                >
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 18 18"
+                    fill="none"
+                    data-eye-icon
+                  >
+                    <path
+                      d="M1.5 9S4 4 9 4s7.5 5 7.5 5-2.5 5-7.5 5S1.5 9 1.5 9z"
+                      stroke="currentColor"
+                      stroke-width="1.3"
+                      stroke-linejoin="round"
+                    />
+                    <circle
+                      cx="9"
+                      cy="9"
+                      r="2.2"
+                      stroke="currentColor"
+                      stroke-width="1.3"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="error-message">
+              <%- msg %>
+            </div>
+
+            <button
+              type="submit"
+              class="btn btn--primary btn--lg btn--block"
+              style="margin-top: var(--sp-6)"
+            >
+              Log In
             </button>
-          </div>
+          </form>
+
+          <p class="auth-foot">
+            Don't have an account? <a href="/signup">Sign Up</a>
+          </p>
         </div>
+      </section>
+    </main>
 
-        <div style="margin-top: var(--sp-4);">
-          <label class="checkbox-row"><input type="checkbox" checked> Keep me logged in for 30 days</label>
-        </div>
-
-        <button type="submit" class="btn btn--primary btn--lg btn--block" style="margin-top: var(--sp-6);">Log In</button>
-      </form>
-
-      <div class="auth-divider"><span>Or log in with</span></div>
-
-      <button type="button" class="social-btn">
-        <svg viewBox="0 0 18 18"><path fill="#4285F4" d="M17.6 9.2c0-.6-.1-1.2-.2-1.8H9v3.5h4.8a4.1 4.1 0 01-1.8 2.7v2.2h2.9c1.7-1.6 2.7-3.9 2.7-6.6z"/><path fill="#34A853" d="M9 18c2.4 0 4.5-.8 6-2.2l-2.9-2.2c-.8.5-1.9.9-3.1.9-2.4 0-4.4-1.6-5.1-3.8H.9v2.3A9 9 0 009 18z"/><path fill="#FBBC05" d="M3.9 10.7a5.4 5.4 0 010-3.4V5H.9a9 9 0 000 8l3-2.3z"/><path fill="#EA4335" d="M9 3.6c1.3 0 2.5.5 3.4 1.3l2.6-2.6C13.5.9 11.4 0 9 0A9 9 0 00.9 5l3 2.3C4.6 5.1 6.6 3.6 9 3.6z"/></svg>
-        Log in with Google
-      </button>
-
-      <p class="auth-foot">Don't have an account? <a href="signup.html">Sign Up</a></p>
-    </div>
-  </section>
-</main>
-
-<script src="js/main.js"></script>
-<script src="js/pages/auth.js"></script>
-</body>
+    <script src="js/main.js"></script>
+    <script src="js/pages/auth.js"></script>
+  </body>
 </html>
