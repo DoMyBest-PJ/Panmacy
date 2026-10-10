@@ -20,26 +20,26 @@
   <p style="color:var(--pm-ink-500);margin-bottom:var(--sp-6);font-size:var(--fs-small)">Join 140+ verified pharmacies on Panmacy. Approval usually takes 1–2 business days.</p>
   <div class="panel">
     <div class="panel__body">
-      <form id="pharmacy-signup-form" style="display:grid;gap:16px">
+      <form id="pharmacy-signup-form" style="display:grid;gap:16px" action="/pharmacy-signup" method="post">
         <div class="field">
           <label class="field__label" for="ps-name">Pharmacy name</label>
-          <input type="text" id="ps-name" class="input" required placeholder="e.g. GreenLeaf Pharmacy">
+          <input type="text" id="ps-name" class="input" required placeholder="e.g. GreenLeaf Pharmacy" name="Pharmacy_name">
         </div>
         <div class="field">
           <label class="field__label" for="ps-owner">Pharmacist full name</label>
-          <input type="text" id="ps-owner" class="input" required>
+          <input type="text" id="ps-owner" class="input" placeholder="e.g. Phuthit Chaiwong" required name="Pharmacist_name">
         </div>
         <div class="field">
           <label class="field__label" for="ps-email">Contact email</label>
-          <input type="email" id="ps-email" class="input" required>
+          <input type="email" id="ps-email" class="input" placeholder="pharmacy@example.com" required name="email">
         </div>
         <div class="field">
           <label class="field__label" for="ps-phone">Pharmacy phone</label>
-          <input type="tel" id="ps-phone" class="input" required>
+          <input type="tel" id="ps-phone" class="input" placeholder="053-111-000" required  name="phone">
         </div>
         <div class="field">
           <label class="field__label" for="ps-address">Pharmacy address</label>
-          <input type="text" id="ps-address" class="input" required>
+          <input type="text" id="ps-address" class="input" placeholder="e.g. 120 Huay Kaew Rd, Suthep, Mueang, Chiang Mai 50200" required name="address">
         </div>
         <div class="field">
           <label class="field__label" for="ps-license">Pharmacy license number</label>

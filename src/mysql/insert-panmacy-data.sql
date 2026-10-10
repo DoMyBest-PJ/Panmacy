@@ -13,8 +13,8 @@ START TRANSACTION;
 -- 1. User (20 rows)  ID 1-12 = CUSTOMER, ID 13-20 = PHARMACIST
 -- ---------------------------------------------------------------------
 INSERT INTO `User` (UserID, Username, Email, Password, Role, CreatedDate) VALUES
-(1,  'somchai_k',    'somchai.k@example.com',    '$2b$10$dummyhashdummyhashdummyhashdummyhashdummyhashdummyhas01', 'CUSTOMER',   '2026-01-10 09:00:00'),
-(2,  'somying_r',    'somying.r@example.com',    '$2b$10$dummyhashdummyhashdummyhashdummyhashdummyhashdummyhas02', 'CUSTOMER',   '2026-01-12 10:15:00'),
+(1,  'somchai_k',    'somchai.k@example.com',    '123', 'CUSTOMER',   '2026-01-10 09:00:00'),
+(2,  'somying_r',    'somying.r@example.com',    '123', 'CUSTOMER',   '2026-01-12 10:15:00'),
 (3,  'prasert_w',    'prasert.w@example.com',    '$2b$10$dummyhashdummyhashdummyhashdummyhashdummyhashdummyhas03', 'CUSTOMER',   '2026-01-15 11:30:00'),
 (4,  'wipawadee_s',  'wipawadee.s@example.com',  '$2b$10$dummyhashdummyhashdummyhashdummyhashdummyhashdummyhas04', 'CUSTOMER',   '2026-01-20 14:00:00'),
 (5,  'kittipong_s',  'kittipong.s@example.com',  '$2b$10$dummyhashdummyhashdummyhashdummyhashdummyhashdummyhas05', 'CUSTOMER',   '2026-02-01 08:45:00'),

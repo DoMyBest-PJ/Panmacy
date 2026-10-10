@@ -1,8 +1,8 @@
 import express from "express";
 import session from "express-session";
 import path from "path";
-import {homepage , login , forum , cart , profile , orders , admin , pharmacist_signup , pharmacy_dashboard , loginUser} from "./controllers/controll"
-import {Connection_status} from "./models/db";
+import {homepage ,pharmacy_signup,signout,signupUser, login , forum , cart , profile , orders , admin , pharmacist_signup , pharmacy_dashboard , loginUser ,signup} from "./controllers/controll"
+import {db,Connection_status} from "./models/db";
 
 const app = express();
 const PORT = 3000;
@@ -24,14 +24,45 @@ app.use(  //session data
 declare module "express-session" {  // session value
   interface SessionData {
     userID?: number;
-    userType?: "Customer" | "Seller";
+    userType?: "CUSTOMER" | "PHARMACIST";
     tempMsg?: string;
   }
 }
 
-app.use((req, res, next) => { // ตัวแปรถาวร
-    res.locals.activePage = null;
+app.use(async (req, res, next) => { //  ตัวแปรถาวร + ทำงานทุกครั้งที่เปลี่ยน route
+  try {
+    res.locals.activePage = undefined;
+    res.locals.username = undefined;
+    res.locals.user_Email = undefined;
+    res.locals.userID = req.session.userID;
+    res.locals.userType = req.session.userType;
+    res.locals.isLogin = !!req.session.userID;
+
+    if (req.session.userID) {
+      const [rows]: any = await db.execute(
+        "SELECT Username,Email FROM `user` WHERE UserID = ?",
+        [req.session.userID]
+      );
+      const [rows2]: any = await db.execute(
+        "SELECT CustomerName FROM `customer` WHERE UserID = ?",
+        [req.session.userID]
+      );
+
+      if (rows.length > 0) {
+        res.locals.username = rows[0].Username;
+        if(rows2[0].CustomerName != "Anonymous"){
+          res.locals.username = rows2[0].CustomerName;
+        }
+      }
+      if (rows.length > 0) {
+        res.locals.user_Email = rows[0].Email;
+      }
+    }
+
     next();
+  } catch (err) {
+    next(err);
+  }
 });
 
 
@@ -56,7 +87,15 @@ app.get("/pharmacist-signup",pharmacist_signup);
 
 app.get("/pharmacy-dashboard",pharmacy_dashboard);
 
+app.post("/pharmacy-signup", pharmacy_signup);
+
 app.post("/user-login", loginUser);
+
+app.get("/signup" , signup);
+
+app.post("/sign-up",signupUser);
+
+app.get("/signout",signout);
 
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);

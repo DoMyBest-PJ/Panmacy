@@ -1,10 +1,12 @@
 import database from "mysql2/promise";
+import express from "express";
+const app = express();
 
 export const db = database.createPool({
     host:"localhost",
     user:"root",
     password:"",
-    database:"test",
+    database:"panmacy",
     port:3306
 });
 

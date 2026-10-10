@@ -44,6 +44,7 @@ CREATE TABLE Customer (
 -- ---------------------------------------------------------------------
 CREATE TABLE Pharmacist (
     UserID        INT PRIMARY KEY,
+    PharmacistName  VARCHAR(150) NOT NULL,
     LicenseNumber VARCHAR(100) NOT NULL UNIQUE,
     Phone         VARCHAR(30),
 
