@@ -519,6 +519,7 @@
   gap: 0;
   min-height: calc(100vh - var(--nav-h));
 }
+.dash-layout--standalone { min-height: 100vh; }
 .dash-sidebar {
   background: var(--pm-green-800);
   color: var(--pm-white);
@@ -527,6 +528,10 @@
   top: var(--nav-h);
   height: calc(100vh - var(--nav-h));
   overflow-y: auto;
+}
+.dash-layout--standalone .dash-sidebar {
+  top: 0;
+  height: 100vh;
 }
 .dash-sidebar__label {
   font-size: var(--fs-xs);
@@ -668,6 +673,7 @@
     gap: var(--sp-1);
     padding: var(--sp-3);
   }
+  .dash-layout--standalone .dash-sidebar { height: auto; }
   .dash-sidebar__label { display: none; }
   .dash-nav-item { width: auto; }
 }

@@ -65,6 +65,14 @@
     font-weight: bold;
 }
 
+.success-message {
+    color: green;
+    text-align: center;
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
 @media (max-width: 900px) {
   .auth-shell { grid-template-columns: 1fr; }
   .auth-panel { display: none; }

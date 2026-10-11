@@ -7,6 +7,9 @@ export async function homepage(req: Request, res: Response) {
   console.log("TempMsg: ", req.session.tempMsg);
   console.log("Username: ", res.locals.username);
 
+  if(req.session.userType === "PHARMACIST"){
+    return res.redirect("pharmacy-dashboard");
+  }
   res.render("index", { activePage: 1 });
 }
 
@@ -24,8 +27,15 @@ export function cart(req: Request, res: Response) {
   res.render("cart");
 }
 
-export function profile(req: Request, res: Response) {
-  res.render("profile");
+export async function profile(req: Request, res: Response) {
+  const [rows]:any = await db.execute(
+    "SELECT * FROM user u JOIN customer c ON u.UserID = c.UserID WHERE u.UserID = ?",
+    [res.locals.userID]
+  );
+  const msg = req.session.tempMsg;
+  req.session.tempMsg = undefined;
+
+  res.render("profile",{ name: rows[0].CustomerName , email: rows[0].Email , phone: rows[0].Phone , address: rows[0].Address , msg});
 }
 
 export function orders(req: Request, res: Response) {
@@ -42,8 +52,12 @@ export function pharmacist_signup(req: Request, res: Response) {
   res.render("pharmacist-signup",{msg});
 }
 
-export function pharmacy_dashboard(req: Request, res: Response) {
-  res.render("pharmacy-dashboard");
+export async function pharmacy_dashboard(req: Request, res: Response) {
+  const [rows]:any = await db.execute(
+    "SELECT * FROM pharmacy cy INNER JOIN pharmacist cist ON cy.PharmacistID = cist.UserID WHERE PharmacistID = ?;",
+    [res.locals.userID]
+  );
+  res.render("pharmacy-dashboard",{ pharname: rows[0].PharmacyName });
 }
 
 export async function loginUser(req: Request, res: Response) {
@@ -71,14 +85,13 @@ export function signup(req: Request, res: Response) {
 }
 
 export async function signupUser(req: Request, res: Response) {
-  const con = await db.getConnection();
   try {
     const { username, email, password, repassword } = req.body;
-    con.beginTransaction();
 
-    const [rows]: any = await db.execute("SELECT Username,Email FROM user WHERE Email = ?", [
-      email,
-    ]);
+    const [rows]: any = await db.execute(
+      "SELECT Username,Email FROM user WHERE Email = ?",
+      [email]
+    );
 
     if (rows.length > 0) {
       if (rows[0].Username === username) {
@@ -89,32 +102,29 @@ export async function signupUser(req: Request, res: Response) {
       return res.redirect("/signup");
     }
 
-    await con.execute(
-      "INSERT INTO user (Username, Email, Password, Role, CreatedDate) VALUES (?, ?, ?, ?, NOW())",
-      [username, email, password, "CUSTOMER"],
+    await db.execute(
+      "INSERT INTO user (Username, Email, Password, Role, CreatedDate) VALUES (?, ?, ?, 'CUSTOMER', NOW())",
+      [username, email, password]
     );
 
-    const [user]: any = await db.execute("SELECT * FROM user WHERE Email = ?", [
-      email,
-    ]);
-
-    await con.execute(
-      "INSERT INTO customer(UserID,CustomerName) VALUES (?,?);",
-      [user[0].UserID, "Anonymous"],
+    const [user]: any = await db.execute(
+      "SELECT * FROM user WHERE Email = ?",
+      [email]
     );
 
-    await con.commit();
+    await db.execute(
+      "INSERT INTO customer(UserID,CustomerName) VALUES (?,'Anonymous')",
+      [user[0].UserID]
+    );
+
     return res.redirect("/login");
 
   } catch (e) {
 
-    await con.rollback();
     console.log(e);
     req.session.tempMsg = "Something went wrong.";
     return res.redirect("/signup");
 
-  }finally{
-    con.release();
   }
 }
 
@@ -128,39 +138,73 @@ export function signout(req: Request, res: Response) {
 }
 
 export async function pharmacy_signup(req:Request , res:Response){
-  const con = await db.getConnection();
   try{
     const {Pharmacy_name , Pharmacist_name, phone , address , license_number} = req.body;
-    con.beginTransaction();
 
-    await con.execute(
+    const [rows]:any = await db.execute(
+      "SELECT LicenseNumber FROM Pharmacist"
+    );
+
+    if(rows[0].LicenseNumber === license_number){
+      req.session.tempMsg = "LicenseNumber already exists.";
+      return res.redirect("/pharmacist-signup");
+    }
+
+    await db.execute(
       "INSERT INTO pharmacist(UserID,PharmacistName, LicenseNumber, Phone) VALUES (?,?,?,?);",
       [res.locals.userID, Pharmacist_name , license_number , null]
     );
-    await con.execute(
+    await db.execute(
       "INSERT INTO pharmacy(PharmacistID, PharmacyName, Address, ContactNumber, Description) VALUES (?,?,?,?,NULL);",
       [res.locals.userID, Pharmacy_name , address , phone]
     );
-    await con.execute(
+    await db.execute(
       "DELETE FROM customer WHERE UserID = ?",
       [res.locals.userID]
     )
-    await con.execute(
+    await db.execute(
       "UPDATE user SET role = 'PHARMACIST' WHERE UserID = ?",
       [res.locals.userID]
     )
 
-    await con.commit();
+    req.session.userType = "PHARMACIST";
     return res.redirect('/');
 
   }catch(e){
 
-    await con.rollback();
     console.log(e);
     req.session.tempMsg = "Something went wrong.";
     return res.redirect("/pharmacist-signup");
 
-  }finally{
-    con.release();
   }
 }
+
+
+export async function profile_change(req: Request, res: Response) {
+  try {
+    const { name, email, phone, address } = req.body;
+    const userID = req.session.userID;
+
+    await db.execute(
+      "UPDATE user SET Email = ? WHERE UserID = ?",
+      [email, userID]
+    );
+
+    await db.execute(
+      `UPDATE customer
+       SET CustomerName = ?, Phone = ?, Address = ?
+       WHERE UserID = ?`,
+      [name, phone, address, userID]
+    );
+
+    req.session.tempMsg = "Successfully changed";
+    return res.redirect("/profile");
+
+  } catch (e) {
+
+    console.log(e);
+    req.session.tempMsg = "Something went wrong.";
+    return res.redirect("/pharmacist-signup");
+  }
+}
+

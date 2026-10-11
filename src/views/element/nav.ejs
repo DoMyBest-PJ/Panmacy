@@ -33,7 +33,7 @@
         <span class="navbar__badge" data-cart-badge>3</span>
       </a>
       <div class="navbar__profile">
-        <button type="button" class="navbar__avatar" data-profile-toggle aria-expanded="false" aria-label="My Account" aria-haspopup="true"><%= username.charAt(0) %></button>
+        <button type="button" class="navbar__avatar" data-profile-toggle aria-expanded="false" aria-label="My Account" aria-haspopup="true"><%= username ? username.charAt(0) : null %></button>
         <div class="dropdown-menu" data-profile-menu role="menu">
           <div class="dropdown-menu__header">
             <div class="dropdown-menu__name"><%= username %></div>

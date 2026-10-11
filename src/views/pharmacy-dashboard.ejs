@@ -12,9 +12,7 @@
 </head>
 <body>
 
-  <%- include("element/nav") %>
-
-<div class="dash-layout">
+<div class="dash-layout dash-layout--standalone">
   <aside class="dash-sidebar">
     <div class="dash-sidebar__label">Pharmacy</div>
     <button type="button" class="dash-nav-item is-active" data-pharm-tab="dashboard">
@@ -40,8 +38,8 @@
     <section data-pharm-panel="dashboard">
       <div class="dash-header">
         <div>
-          <h1>SafeCare Pharmacy</h1>
-          <p style="color:var(--pm-ink-500);margin-top:4px;font-size:var(--fs-small)">Sukhumvit Branch · Owner dashboard</p>
+          <h1><%- pharname %></h1>
+          <p style="color:var(--pm-ink-500);margin-top:4px;font-size:var(--fs-small)">Owner dashboard</p>
         </div>
       </div>
       <div class="stat-grid">
@@ -59,11 +57,6 @@
           <div class="stat-card__label">Products live</div>
           <div class="stat-card__value">186</div>
           <div class="stat-card__hint">4 low stock</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-card__label">Rating</div>
-          <div class="stat-card__value">4.8</div>
-          <div class="stat-card__hint">from 420 reviews</div>
         </div>
       </div>
       <div class="panel">
@@ -296,6 +289,7 @@
         </div>
       </div>
     </section>
+    <a href="/signout"><button>Sign Out</button></a>
   </main>
 </div>
 

@@ -1,8 +1,24 @@
 import express from "express";
 import session from "express-session";
 import path from "path";
-import {homepage ,pharmacy_signup,signout,signupUser, login , forum , cart , profile , orders , admin , pharmacist_signup , pharmacy_dashboard , loginUser ,signup} from "./controllers/controll"
-import {db,Connection_status} from "./models/db";
+import {
+  homepage,
+  pharmacy_signup,
+  signout,
+  signupUser,
+  login,
+  forum,
+  cart,
+  profile,
+  orders,
+  admin,
+  pharmacist_signup,
+  pharmacy_dashboard,
+  loginUser,
+  signup,
+  profile_change,
+} from "./controllers/controll";
+import { db, Connection_status } from "./models/db";
 
 const app = express();
 const PORT = 3000;
@@ -13,7 +29,8 @@ app.use(express.static(path.join(__dirname, "..", "public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.use(  //session data
+app.use(
+  //session data
   session({
     secret: "mysecret",
     resave: false,
@@ -21,7 +38,8 @@ app.use(  //session data
   }),
 );
 
-declare module "express-session" {  // session value
+declare module "express-session" {
+  // session value
   interface SessionData {
     userID?: number;
     userType?: "CUSTOMER" | "PHARMACIST";
@@ -29,7 +47,8 @@ declare module "express-session" {  // session value
   }
 }
 
-app.use(async (req, res, next) => { //  ตัวแปรถาวร + ทำงานทุกครั้งที่เปลี่ยน route
+app.use(async (req, res, next) => {
+  //  ตัวแปรถาวร + ทำงานทุกครั้งที่เปลี่ยน route
   try {
     res.locals.activePage = undefined;
     res.locals.username = undefined;
@@ -40,22 +59,27 @@ app.use(async (req, res, next) => { //  ตัวแปรถาวร + ทำ�
 
     if (req.session.userID) {
       const [rows]: any = await db.execute(
-        "SELECT Username,Email FROM `user` WHERE UserID = ?",
-        [req.session.userID]
-      );
-      const [rows2]: any = await db.execute(
-        "SELECT CustomerName FROM `customer` WHERE UserID = ?",
-        [req.session.userID]
+        `SELECT u.Username, u.Email, c.CustomerName FROM user u INNER JOIN customer c ON u.UserID = c.UserID WHERE u.UserID = ?`,
+        [req.session.userID],
       );
 
       if (rows.length > 0) {
         res.locals.username = rows[0].Username;
-        if(rows2[0].CustomerName != "Anonymous"){
-          res.locals.username = rows2[0].CustomerName;
+        if (rows[0].CustomerName != "Anonymous") {
+          res.locals.username = rows[0].CustomerName;
         }
-      }
-      if (rows.length > 0) {
         res.locals.user_Email = rows[0].Email;
+      }
+
+      if (res.locals.userType === "PHARMACIST") {
+        const [rows]: any = await db.execute(
+          "SELECT PharmacistName FROM pharmacist WHERE UserID = ?",
+          [req.session.userID],
+        );
+
+        if (rows.length > 0) {
+          res.locals.username = rows[0].PharmacistName;
+        }
       }
     }
 
@@ -65,38 +89,38 @@ app.use(async (req, res, next) => { //  ตัวแปรถาวร + ทำ�
   }
 });
 
+Connection_status(); // ใช้ run function ใน db.ts เฉยๆใช้ตรงนี้เเล้วดูรกๆ
 
+app.get("/", homepage);
 
-Connection_status();  // ใช้ run function ใน db.ts เฉยๆใช้ตรงนี้เเล้วดูรกๆ
+app.get("/admin", admin);
 
-app.get("/",homepage);
+app.get("/login", login);
 
-app.get("/admin",admin);
+app.get("/forum", forum);
 
-app.get("/login",login);
+app.get("/cart", cart);
 
-app.get("/forum",forum);
+app.get("/profile", profile);
 
-app.get("/cart",cart);
+app.get("/orders", orders);
 
-app.get("/profile",profile);
+app.get("/pharmacist-signup", pharmacist_signup);
 
-app.get("/orders",orders);
-
-app.get("/pharmacist-signup",pharmacist_signup);
-
-app.get("/pharmacy-dashboard",pharmacy_dashboard);
+app.get("/pharmacy-dashboard", pharmacy_dashboard);
 
 app.post("/pharmacy-signup", pharmacy_signup);
 
 app.post("/user-login", loginUser);
 
-app.get("/signup" , signup);
+app.get("/signup", signup);
 
-app.post("/sign-up",signupUser);
+app.post("/sign-up", signupUser);
 
-app.get("/signout",signout);
+app.get("/signout", signout);
+
+app.post("/profile-change", profile_change);
 
 app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
+  console.log(`Server running at http://localhost:${PORT}`);
 });
