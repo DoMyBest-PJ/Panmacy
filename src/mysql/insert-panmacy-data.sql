@@ -56,15 +56,15 @@ INSERT INTO Customer (UserID, CustomerName, Phone, Address) VALUES
 -- ---------------------------------------------------------------------
 -- 3. Pharmacist (8 rows) : UserID 13-20
 -- ---------------------------------------------------------------------
-INSERT INTO Pharmacist (UserID, LicenseNumber, Phone) VALUES
-(13, 'PH-10001', '053-111-001'),
-(14, 'PH-10002', '053-111-002'),
-(15, 'PH-10003', '053-111-003'),
-(16, 'PH-10004', '053-111-004'),
-(17, 'PH-10005', '02-111-0005'),
-(18, 'PH-10006', '02-111-0006'),
-(19, 'PH-10007', '043-111-007'),
-(20, 'PH-10008', '074-111-008');
+INSERT INTO Pharmacist (UserID, PharmacistName, LicenseNumber, Phone) VALUES
+(13, 'Nattaya Wongchai',   'PH-10001', '053-111-001'),
+(14, 'Wichai Srisuk',      'PH-10002', '053-111-002'),
+(15, 'Kanya Chantarat',    'PH-10003', '053-111-003'),
+(16, 'Anan Rattanakul',    'PH-10004', '053-111-004'),
+(17, 'Siriporn Kaewmanee', 'PH-10005', '02-111-0005'),
+(18, 'Thawat Boonmee',     'PH-10006', '02-111-0006'),
+(19, 'Pimchanok Saelim',   'PH-10007', '043-111-007'),
+(20, 'Surasak Thongchai',  'PH-10008', '074-111-008');
 
 
 -- ---------------------------------------------------------------------

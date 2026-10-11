@@ -1,6 +1,4 @@
 import database from "mysql2/promise";
-import express from "express";
-const app = express();
 
 export const db = database.createPool({
     host:"localhost",
