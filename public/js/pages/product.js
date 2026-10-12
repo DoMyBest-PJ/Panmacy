@@ -62,4 +62,5 @@
       document.querySelector(`[data-panel="${btn.dataset.tab}"]`).classList.add('is-active');
     });
   });
+
 })();

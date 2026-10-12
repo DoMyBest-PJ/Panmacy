@@ -75,37 +75,23 @@ CREATE TABLE Pharmacy (
         ON DELETE RESTRICT
 ) ENGINE = InnoDB;
 
-
--- ---------------------------------------------------------------------
--- 5. Product
---    Category is an ATTRIBUTE of Product (as in the entity table),
---    so the separate Category table has been removed.
--- ---------------------------------------------------------------------
-CREATE TABLE Product (
-    ProductID   INT AUTO_INCREMENT PRIMARY KEY,
-    ProductName VARCHAR(255) NOT NULL,
-    Description TEXT,
-    Category    VARCHAR(100) NOT NULL,
-
-    INDEX idx_product_category (Category)
-) ENGINE = InnoDB;
-
-
 -- ---------------------------------------------------------------------
 -- 6. PharmacyProduct   (Pharmacy 1:M PharmacyProduct, Product 1:M PharmacyProduct)
 -- ---------------------------------------------------------------------
 CREATE TABLE PharmacyProduct (
     PharmacyProductID INT AUTO_INCREMENT PRIMARY KEY,
     PharmacyID        INT NOT NULL,
-    ProductID         INT NOT NULL,
+    ProductName       VARCHAR(255) NOT NULL,
+    Description       TEXT,
     Quantity          INT NOT NULL DEFAULT 0,
     Price             DECIMAL(10, 2) NOT NULL,
+    Category          VARCHAR(100) NOT NULL,
 
-    CONSTRAINT chk_pharmacy_product_quantity CHECK (Quantity >= 0),
-    CONSTRAINT chk_pharmacy_product_price    CHECK (Price >= 0),
+    CONSTRAINT chk_pharmacy_product_quantity
+        CHECK (Quantity >= 0),
 
-    -- one pharmacy can list the same product only once
-    CONSTRAINT uq_pharmacy_product UNIQUE (PharmacyID, ProductID),
+    CONSTRAINT chk_pharmacy_product_price
+        CHECK (Price >= 0),
 
     CONSTRAINT fk_pharmacy_product_pharmacy
         FOREIGN KEY (PharmacyID)
@@ -113,11 +99,7 @@ CREATE TABLE PharmacyProduct (
         ON UPDATE CASCADE
         ON DELETE RESTRICT,
 
-    CONSTRAINT fk_pharmacy_product_product
-        FOREIGN KEY (ProductID)
-        REFERENCES Product(ProductID)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT
+    INDEX idx_product_category (Category)
 ) ENGINE = InnoDB;
 
 
@@ -250,6 +232,7 @@ CREATE TABLE ForumThread (
     UserID      INT NOT NULL,
     Title       VARCHAR(255) NOT NULL,
     Description TEXT NOT NULL,
+    Category    VARCHAR(100) NOT NULL DEFAULT 'General Health',
     CreatedDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_thread_user

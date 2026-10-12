@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title><%= forumOwner.Title %> — Panmacy Health Forum</title>
+
+  <link rel="stylesheet" href="/css/variables.css">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/pages/forum.css">
+
+  <style>
+    .thread-detail {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .thread-back {
+      display: inline-block;
+      margin: 10px 0 20px;
+      color: var(--pm-ink-500);
+      text-decoration: none;
+    }
+
+    .thread-post,
+    .thread-comment,
+    .thread-reply {
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+
+    .thread-title {
+      margin: 16px 0;
+      line-height: 1.4;
+    }
+
+    .thread-body {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      line-height: 1.8;
+      margin-top: 20px;
+    }
+
+    .thread-meta,
+    .comment-date {
+      color: var(--pm-ink-500);
+      font-size: 13px;
+    }
+
+    .thread-comments {
+      margin-top: 30px;
+    }
+
+    .comment-author {
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .comment-content {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      line-height: 1.7;
+    }
+
+    .comment-date {
+      margin-top: 10px;
+    }
+
+    .thread-reply textarea {
+      width: 100%;
+      min-height: 120px;
+      resize: vertical;
+      padding: 12px;
+      box-sizing: border-box;
+    }
+
+    .thread-reply button {
+      margin-top: 12px;
+    }
+  </style>
+</head>
+
+<body>
+  <%- include("element/nav") %>
+
+  <main>
+    <div class="container page-body thread-detail">
+
+      <a class="thread-back" href="/forum">
+        &larr; Back to Health Forum
+      </a>
+
+      <!-- Original thread -->
+      <article class="card thread-post">
+        <div class="thread-meta">
+          Posted by <strong><%= forumOwner.OwnerName %></strong>
+          · <%= new Date(forumOwner.CreatedDate).toLocaleString() %>
+        </div>
+
+        <h1 class="thread-title">
+          <%= forumOwner.Title %>
+        </h1>
+
+        <p><span class="badge"><%= forumOwner.Category %></span></p>
+        <div class="thread-body"><%= forumOwner.Description %></div>
+      </article>
+
+      <!-- Comments -->
+      <section class="thread-comments" id="comments">
+        <h2>Comments (<%= comment.length %>)</h2>
+
+        <% if (comment.length === 0) { %>
+        <div class="card thread-comment">
+          <p>No comments yet. Be the first to reply.</p>
+        </div>
+        <% } %>
+
+        <% comment.forEach((c) => { %>
+        <article class="card thread-comment">
+          <div class="comment-author">
+            <%= c.CommenterName %>
+            <% if (c.Role == "PHARMACIST") { %>
+            <span class="badge badge--verified"><svg viewBox="0 0 12 12" fill="none">
+                <path d="M2.5 6l2 2 4.5-4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>Verified Pharmacist</span>
+            <% } %>
+          </div>
+
+          <div class="comment-content"><%= c.Content %></div>
+
+          <div class="comment-date">
+            <%= new Date(c.CreatedDate).toLocaleString() %>
+          </div>
+        </article>
+        <% }) %>
+      </section>
+
+      <!-- Add a comment -->
+      <form class="card thread-reply" method="POST" action="/thread/<%= threadID %>/comment">
+        <h3>Write a comment</h3>
+
+        <% if (isLogin) { %>
+        <textarea class="input" name="content" placeholder="Share a helpful reply..." maxlength="5000" required></textarea>
+
+        <button class="btn btn--primary" type="submit">
+          Post comment
+        </button>
+        <% } else { %>
+        <p>
+          Please <a href="/login">log in</a> to join the discussion.
+        </p>
+        <% } %>
+      </form>
+
+    </div>
+  </main>
+
+  <script src="/js/main.js"></script>
+</body>
+
+</html>

@@ -12,8 +12,6 @@
 </head>
 <body>
 
-<%- include('element/nav') %>
-
 <div class="dash-layout dash-layout--standalone">
   <aside class="dash-sidebar">
     <div class="dash-sidebar__label">Pharmacy</div>
@@ -35,7 +33,9 @@
     </button>
   </aside>
 
-  <main class="dash-main">
+  <div class="pharmacy-dashboard-content">
+    <%- include('element/nav') %>
+    <main class="dash-main">
     <!-- Dashboard -->
     <section data-pharm-panel="dashboard">
       <div class="dash-header">
@@ -288,7 +288,8 @@
       </div>
     </section>
     <a href="/signout"><button>Sign Out</button></a>
-  </main>
+    </main>
+  </div>
 </div>
 
 <script src="js/main.js"></script>

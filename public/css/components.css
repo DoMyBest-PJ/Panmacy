@@ -533,6 +533,7 @@
   top: 0;
   height: 100vh;
 }
+.pharmacy-dashboard-content { min-width: 0; }
 .dash-sidebar__label {
   font-size: var(--fs-xs);
   text-transform: uppercase;

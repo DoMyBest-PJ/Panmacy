@@ -84,53 +84,27 @@ INSERT INTO Pharmacy (PharmacyID, PharmacistID, PharmacyName, Address, ContactNu
 -- ---------------------------------------------------------------------
 -- 5. Product (20 rows)
 -- ---------------------------------------------------------------------
-INSERT INTO Product (ProductID, ProductName, Description, Category) VALUES
-(1,  'Paracetamol 500 mg (10 tablets)',            'Relieves pain and reduces fever.',                       'Pain & Fever Relief'),
-(2,  'Ibuprofen 200 mg (10 tablets)',              'Relieves pain and inflammation. Take after meals.',      'Pain & Fever Relief'),
-(3,  'Throat Lozenges',                            'Soothes an irritated or sore throat.',                   'Cold & Sore Throat'),
-(4,  'Cough Syrup 60 ml',                          'Liquid medicine that relieves cough and loosens phlegm.', 'Cold & Sore Throat'),
-(5,  'Chlorpheniramine 4 mg (10 tablets)',         'Relieves runny nose and allergy symptoms. May cause drowsiness.', 'Allergy'),
-(6,  'Loratadine 10 mg (10 tablets)',              'Low-drowsiness antihistamine for allergies.',            'Allergy'),
-(7,  'Oral Rehydration Salts (1 sachet)',          'Replaces fluids and electrolytes during diarrhea.',      'Digestive Health'),
-(8,  'Antacid Suspension 180 ml',                  'Relieves bloating and indigestion.',                     'Digestive Health'),
-(9,  'Chewable Antacid Tablets (20 tablets)',      'Relieves heartburn and acid reflux.',                    'Digestive Health'),
-(10, 'Vitamin C 1000 mg (30 tablets)',             'Vitamin C supplement.',                                  'Vitamins & Supplements'),
-(11, 'Vitamin B Complex (30 tablets)',             'Supplement containing the B-group vitamins.',            'Vitamins & Supplements'),
-(12, 'Calcium + Vitamin D (30 tablets)',           'Calcium supplement for bone and teeth health.',          'Vitamins & Supplements'),
-(13, 'Fish Oil Omega-3 (30 capsules)',             'Fish oil dietary supplement.',                           'Vitamins & Supplements'),
-(14, 'Rubbing Alcohol 70% 450 ml',                 'Cleans skin around wounds and surfaces.',                'First Aid'),
-(15, 'Adhesive Bandages (100 pieces)',             'Standard-size adhesive bandages.',                       'First Aid'),
-(16, 'Povidone-Iodine 10% 30 ml',                  'Antiseptic solution for fresh wounds.',                  'First Aid'),
-(17, 'Alcohol Hand Sanitizer Gel 500 ml',          '70% alcohol hand sanitizer gel.',                        'Hygiene'),
-(18, '3-Ply Surgical Face Masks (50 pieces)',      'Medical-grade disposable face masks.',                   'Hygiene'),
-(19, 'Sunscreen SPF50 PA+++ 50 ml',                'Sunscreen for face and body.',                           'Skin Care'),
-(20, 'Dry Skin Moisturizing Cream 200 ml',         'Rich moisturizing cream for very dry skin.',             'Skin Care');
-
-
--- ---------------------------------------------------------------------
--- 6. PharmacyProduct (20 rows) : (PharmacyID, ProductID) unique
--- ---------------------------------------------------------------------
-INSERT INTO PharmacyProduct (PharmacyProductID, PharmacyID, ProductID, Quantity, Price) VALUES
-(1,  1, 1,  200, 25.00),
-(2,  1, 5,  150, 30.00),
-(3,  1, 10,  80, 189.00),
-(4,  2, 1,  300, 22.00),
-(5,  2, 3,  120, 35.00),
-(6,  2, 7,  250, 12.00),
-(7,  3, 2,  100, 40.00),
-(8,  3, 6,   90, 55.00),
-(9,  3, 11,  70, 120.00),
-(10, 4, 4,   60, 65.00),
-(11, 4, 8,  110, 28.00),
-(12, 4, 12,  50, 350.00),
-(13, 5, 9,  130, 48.00),
-(14, 5, 14, 140, 35.00),
-(15, 5, 15, 400, 59.00),
-(16, 6, 10,  90, 175.00),
-(17, 6, 17,  75, 99.00),
-(18, 7, 18, 200, 129.00),
-(19, 7, 16, 100, 42.00),
-(20, 8, 19,  60, 259.00);
+INSERT INTO PharmacyProduct (PharmacyProductID, PharmacyID, ProductName, Description, Quantity, Price, Category) VALUES
+(1,  1, 'Paracetamol 500 mg (10 tablets)', 'Relieves pain and reduces fever.', 200, 25.00, 'Pain & Fever Relief'),
+(2,  1, 'Chlorpheniramine 4 mg (10 tablets)', 'Relieves runny nose and allergy symptoms. May cause drowsiness.', 150, 30.00, 'Allergy'),
+(3,  1, 'Vitamin C 1000 mg (30 tablets)', 'Vitamin C supplement.', 80, 189.00, 'Vitamins & Supplements'),
+(4,  2, 'Paracetamol 500 mg (10 tablets)', 'Relieves pain and reduces fever.', 300, 22.00, 'Pain & Fever Relief'),
+(5,  2, 'Throat Lozenges', 'Soothes an irritated or sore throat.', 120, 35.00, 'Cold & Sore Throat'),
+(6,  2, 'Oral Rehydration Salts (1 sachet)', 'Replaces fluids and electrolytes during diarrhea.', 250, 12.00, 'Digestive Health'),
+(7,  3, 'Ibuprofen 200 mg (10 tablets)', 'Relieves pain and inflammation. Take after meals.', 100, 40.00, 'Pain & Fever Relief'),
+(8,  3, 'Loratadine 10 mg (10 tablets)', 'Low-drowsiness antihistamine for allergies.', 90, 55.00, 'Allergy'),
+(9,  3, 'Vitamin B Complex (30 tablets)', 'Supplement containing the B-group vitamins.', 70, 120.00, 'Vitamins & Supplements'),
+(10, 4, 'Cough Syrup 60 ml', 'Liquid medicine that relieves cough and loosens phlegm.', 60, 65.00, 'Cold & Sore Throat'),
+(11, 4, 'Antacid Suspension 180 ml', 'Relieves bloating and indigestion.', 110, 28.00, 'Digestive Health'),
+(12, 4, 'Calcium + Vitamin D (30 tablets)', 'Calcium supplement for bone and teeth health.', 50, 350.00, 'Vitamins & Supplements'),
+(13, 5, 'Chewable Antacid Tablets (20 tablets)', 'Relieves heartburn and acid reflux.', 130, 48.00, 'Digestive Health'),
+(14, 5, 'Rubbing Alcohol 70% 450 ml', 'Cleans skin around wounds and surfaces.', 140, 35.00, 'First Aid'),
+(15, 5, 'Adhesive Bandages (100 pieces)', 'Standard-size adhesive bandages.', 400, 59.00, 'First Aid'),
+(16, 6, 'Vitamin C 1000 mg (30 tablets)', 'Vitamin C supplement.', 90, 175.00, 'Vitamins & Supplements'),
+(17, 6, 'Alcohol Hand Sanitizer Gel 500 ml', '70% alcohol hand sanitizer gel.', 75, 99.00, 'Hygiene'),
+(18, 7, '3-Ply Surgical Face Masks (50 pieces)', 'Medical-grade disposable face masks.', 200, 129.00, 'Hygiene'),
+(19, 7, 'Povidone-Iodine 10% 30 ml', 'Antiseptic solution for fresh wounds.', 100, 42.00, 'First Aid'),
+(20, 8, 'Sunscreen SPF50 PA+++ 50 ml', 'Sunscreen for face and body.', 60, 259.00, 'Skin Care');
 
 
 -- ---------------------------------------------------------------------
