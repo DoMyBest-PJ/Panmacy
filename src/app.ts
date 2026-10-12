@@ -73,12 +73,13 @@ app.use(async (req, res, next) => {
 
       if (res.locals.userType === "PHARMACIST") {
         const [rows]: any = await db.execute(
-          "SELECT PharmacistName FROM pharmacist WHERE UserID = ?",
+          "SELECT u.Email , p.PharmacistName FROM user u INNER JOIN pharmacist p ON u.UserID = p.UserID WHERE u.UserID = ?",
           [req.session.userID],
         );
 
         if (rows.length > 0) {
           res.locals.username = rows[0].PharmacistName;
+          res.locals.user_Email = rows[0].Email;
         }
       }
     }

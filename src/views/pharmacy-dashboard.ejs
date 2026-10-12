@@ -12,6 +12,8 @@
 </head>
 <body>
 
+<%- include('element/nav') %>
+
 <div class="dash-layout dash-layout--standalone">
   <aside class="dash-sidebar">
     <div class="dash-sidebar__label">Pharmacy</div>
@@ -277,11 +279,7 @@
               <input type="tel" id="shop-phone" class="input" value="02-123-4567">
             </div>
             <div class="field">
-              <label class="field__label" for="shop-hours">Opening hours</label>
-              <input type="text" id="shop-hours" class="input" value="Mon–Sat 08:00–20:00 · Sun 09:00–18:00">
-            </div>
-            <div class="field">
-              <label class="field__label" for="shop-about">About</label>
+              <label class="field__label" for="shop-about">Description</label>
               <textarea id="shop-about" class="input" style="height:100px;padding-top:12px;resize:vertical">Licensed community pharmacy serving Sukhumvit since 2012. Verified on Panmacy.</textarea>
             </div>
             <button type="submit" class="btn btn--primary" style="justify-self:start">Save profile</button>
