@@ -13,9 +13,10 @@
   const qtyInput = document.querySelector('[data-qty-input]');
   const minusBtn = document.querySelector('[data-qty-minus]');
   const plusBtn = document.querySelector('[data-qty-plus]');
-  const UNIT_PRICE = 25;
+  const priceElement = document.querySelector('[data-unit-price]');
+  const UNIT_PRICE = priceElement ? Number(priceElement.dataset.unitPrice) : 0;
   const addBtn = document.querySelector('[data-add-to-cart]');
-  const MAX_QTY = 10;
+  const MAX_QTY = qtyInput ? Number(qtyInput.max) || 10 : 10;
 
   function clampQty(val) {
     let n = parseInt(val, 10);
@@ -26,8 +27,8 @@
   function syncQty() {
     const qty = clampQty(qtyInput.value);
     qtyInput.value = qty;
-    minusBtn.disabled = qty <= 1;
-    plusBtn.disabled = qty >= MAX_QTY;
+    if (minusBtn) minusBtn.disabled = qty <= 1;
+    if (plusBtn) plusBtn.disabled = qty >= MAX_QTY;
     if (addBtn) addBtn.textContent = `เพิ่มลงตะกร้า — ฿${qty * UNIT_PRICE}`;
   }
   if (qtyInput) {

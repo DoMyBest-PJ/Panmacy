@@ -31,7 +31,7 @@
               <circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.6" />
               <path d="M17 17l-3.5-3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
             </svg>
-            <input type="search" class="input has-icon" placeholder="Search medicine, symptoms, or pharmacy name, e.g. Paracetamol">
+            <input type="search" class="input has-icon" aria-label="Search medicines" placeholder="Search medicine, symptoms, or pharmacy name, e.g. Paracetamol" data-product-search>
           </div>
         </div>
       </div>
@@ -47,34 +47,22 @@
         <aside class="filters card" data-filters aria-label="Product filters">
           <div class="filters__head">
             <h3>Filters</h3>
-            <button class="filters__clear" type="button">Clear all</button>
+            <button class="filters__clear" type="button" data-filters-clear>Clear all</button>
           </div>
 
-          <div class="filter-group">
+          <div class="filter-group" data-filter-group="category">
             <div class="filter-group__title">Product Category</div>
-            <label class="filter-option"><input type="checkbox"> Vitamins & Supplements <span class="filter-option__count"></span></label>
-            <label class="filter-option"><input type="checkbox"> Skin Care <span class="filter-option__count"></span></label>
-            <label class="filter-option"><input type="checkbox"> Pain & Fever Relief <span class="filter-option__count"></span></label>
-            <label class="filter-option"><input type="checkbox"> Hygiene <span class="filter-option__count"></span></label>
-            <label class="filter-option"><input type="checkbox"> First Aid <span class="filter-option__count"></span></label>
-            <label class="filter-option"><input type="checkbox"> Digestive Health <span class="filter-option__count"></span></label>
-            <label class="filter-option"><input type="checkbox"> Cold & Sore Throat <span class="filter-option__count"></span></label>
-            <label class="filter-option"><input type="checkbox"> Allergy <span class="filter-option__count"></span></label>
+            <% [...new Set(rows.map(product => product.Category))].sort().forEach(category => { %>
+            <label class="filter-option"><input type="checkbox" value="<%= category %>" data-filter="category"> <%= category %> <span class="filter-option__count"></span></label>
+            <% }); %>
           </div>
 
-
-
-          <div class="filter-group">
+          <div class="filter-group" data-filter-group="pharmacy">
             <div class="filter-group__title">Pharmacy</div>
-            <label class="filter-option"><input type="checkbox"> SafeCare Pharmacy <span class="filter-option__count"></span></label>
-            <label class="filter-option"><input type="checkbox"> BrightCross Pharmacy <span class="filter-option__count"></span></label>
-            <label class="filter-option"><input type="checkbox"> Wellspring Pharmacy <span class="filter-option__count"></span></label>
-            <label class="filter-option"><input type="checkbox"> 24-Hr Community Pharmacy <span class="filter-option__count"></span></label>
+            <% [...new Set(rows.map(product => product.PharmacyName))].sort().forEach(pharmacy => { %>
+            <label class="filter-option"><input type="checkbox" value="<%= pharmacy %>" data-filter="pharmacy"> <%= pharmacy %> <span class="filter-option__count"></span></label>
+            <% }); %>
           </div>
-
-
-
-          <button class="btn btn--primary btn--block" type="button">Show Results</button>
         </aside>
 
         <!-- ---------------- MAIN: RESULTS ---------------- -->
@@ -86,13 +74,13 @@
               </svg>
               Filters
             </button>
-            <p class="results-toolbar__count">Found <strong><%= rows.length %></strong> results</p>
+            <p class="results-toolbar__count" aria-live="polite">Found <strong data-results-count><%= rows.length %></strong> results</p>
             <div class="results-toolbar__sort">
               <label for="sort">Sort by</label>
               <select id="sort" class="select">
-                <option>Lasted</option>
-                <option>Price: Low → High</option>
-                <option>Price: High → Low</option>
+                <option value="latest">Latest</option>
+                <option value="price-asc">Price: Low → High</option>
+                <option value="price-desc">Price: High → Low</option>
               </select>
             </div>
           </div>
@@ -102,7 +90,7 @@
 
             <!-- Product card -->
             <% rows.forEach(Product => { %>
-            <article class="card product-card">
+            <article class="card product-card" data-price="<%= Product.Price %>" data-product-id="<%= Product.PharmacyProductID %>" data-search="<%= [Product.ProductName, Product.Category, Product.PharmacyName, Product.Description || ''].join(' ') %>">
               <div class="product-card__media tile--device">
                 <div class="product-card__badges">
                   <% if(Product.Quantity > 0) { %>
@@ -139,6 +127,7 @@
               </div>
             </article>
             <% }); %>
+            <p class="product-grid__empty" data-empty-state hidden>No products match your search and filters.</p>
           </div>
         </section>
       </div>

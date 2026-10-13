@@ -6,11 +6,11 @@ export async function homepage(req: Request, res: Response) {
     return res.redirect("pharmacy-dashboard");
   }
   const [rows]:any = await db.execute(
-    "SELECT pp.PharmacyProductID, pc.PharmacyName, pp.ProductName , pp.Quantity , pp.Price , pp.Category FROM pharmacy pc INNER JOIN pharmacyproduct pp ON pc.PharmacyID = pp.PharmacyID",
+    "SELECT pp.PharmacyProductID, pc.PharmacyName, pp.ProductName, pp.Description, pp.Quantity, pp.Price, pp.Category FROM pharmacy pc INNER JOIN pharmacyproduct pp ON pc.PharmacyID = pp.PharmacyID",
     []
   );
 
-  res.render("index", { activePage: 1 , rows});
+  res.render("index", { activePage: 1, rows });
 }
 
 export async function forum(req: Request, res: Response) {
