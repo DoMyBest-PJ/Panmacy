@@ -17,10 +17,12 @@ import {
   loginUser,
   signup,
   profile_change,
-  create_thread
+  create_thread,
+  createComment
 } from "./controllers/controll";
 import { db, Connection_status } from "./models/db";
 import forumRouter from "./models/forum";
+import productRouter from "./models/product";
 
 const app = express();
 const PORT = 3000;
@@ -127,6 +129,10 @@ app.post("/profile-change", profile_change);
 app.use("/forum", forumRouter);
 
 app.post("/create-thread", create_thread);
+
+app.post("/thread/:threadID/comment" , createComment);
+
+app.use("/product", productRouter);
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);

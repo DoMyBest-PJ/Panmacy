@@ -232,7 +232,6 @@ CREATE TABLE ForumThread (
     UserID      INT NOT NULL,
     Title       VARCHAR(255) NOT NULL,
     Description TEXT NOT NULL,
-    Category    VARCHAR(100) NOT NULL DEFAULT 'General Health',
     CreatedDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_thread_user

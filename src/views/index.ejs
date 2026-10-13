@@ -90,7 +90,7 @@
             <div class="results-toolbar__sort">
               <label for="sort">Sort by</label>
               <select id="sort" class="select">
-                <option>Recommended</option>
+                <option>Lasted</option>
                 <option>Price: Low → High</option>
                 <option>Price: High → Low</option>
               </select>
@@ -126,17 +126,15 @@
                   </svg>
                   <%= Product.PharmacyName %>
                 </div>
-                <div class="product-card__meta">
-                  <span class="rating"><svg viewBox="0 0 16 16" fill="currentColor">
-                      <path d="M8 1.5l1.9 4.2 4.6.5-3.5 3 1 4.5L8 11.5 3.9 13.7l1-4.5-3.5-3 4.6-.5L8 1.5z" />
-                    </svg>4.8 <span class="rating__count">(320)</span></span>
-                </div>
                 <div class="product-card__price-row">
                   <span class="product-card__price">฿<%= Product.Price %></span>
                 </div>
                 <div class="product-card__actions">
-                  <a href="product.html" class="btn btn--outline btn--sm">View Details</a>
+                  <a href="/product/<%= Product.PharmacyProductID %>" class="btn btn--outline btn--sm">View Details</a>
+                  <% if (isLogin) { %>
                   <button class="btn btn--primary btn--sm" data-add-to-cart>Add to Cart</button>
+                  <%  } %>
+
                 </div>
               </div>
             </article>

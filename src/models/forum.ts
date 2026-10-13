@@ -21,7 +21,6 @@ router.get("/:id", async (req: Request, res: Response) => {
           END AS OwnerName,
           ft.Title,
           ft.Description,
-          ft.Category,
           ft.CreatedDate
        FROM forumthread ft
        INNER JOIN user u ON ft.UserID = u.UserID

@@ -6,7 +6,7 @@ export async function homepage(req: Request, res: Response) {
     return res.redirect("pharmacy-dashboard");
   }
   const [rows]:any = await db.execute(
-    "SELECT pc.PharmacyName, pp.ProductName , pp.Quantity , pp.Price , pp.Category FROM pharmacy pc INNER JOIN pharmacyproduct pp ON pc.PharmacyID = pp.PharmacyID",
+    "SELECT pp.PharmacyProductID, pc.PharmacyName, pp.ProductName , pp.Quantity , pp.Price , pp.Category FROM pharmacy pc INNER JOIN pharmacyproduct pp ON pc.PharmacyID = pp.PharmacyID",
     []
   );
 
@@ -15,7 +15,7 @@ export async function homepage(req: Request, res: Response) {
 
 export async function forum(req: Request, res: Response) {
   const [threads]:any = await db.execute(
-    "SELECT ft.UserID, u.Role, ft.ThreadID, ft.Title, ft.Description, ft.Category, ft.CreatedDate, COUNT(c.CommentID) AS CommentCount FROM forumthread ft LEFT JOIN Comment c ON ft.ThreadID = c.ThreadID JOIN user u ON u.UserID = ft.UserID GROUP BY ft.UserID, u.Role, ft.ThreadID, ft.Title, ft.Description, ft.Category, ft.CreatedDate ORDER BY ft.CreatedDate DESC;",
+    "SELECT ft.UserID, u.Role, ft.ThreadID, ft.Title, ft.Description, ft.CreatedDate, COUNT(c.CommentID) AS CommentCount FROM forumthread ft LEFT JOIN Comment c ON ft.ThreadID = c.ThreadID JOIN user u ON u.UserID = ft.UserID GROUP BY ft.UserID, u.Role, ft.ThreadID, ft.Title, ft.Description, ft.CreatedDate ORDER BY ft.CreatedDate DESC;",
   );
 
   const name = [];
@@ -223,10 +223,23 @@ export async function profile_change(req: Request, res: Response) {
 }
 
 export async function create_thread(req: Request, res: Response) {
-  const {title ,category, body} = req.body;
-  console.log(title);
-  console.log(category);
-  console.log(body);
-
+  const {title, body} = req.body;
+  await db.execute(
+    "INSERT INTO forumthread(UserID , Title , Description , CreatedDate) VALUES( ?, ?, ?, NOW())",
+    [req.session.userID,title,body]
+  );
   return res.redirect("/forum");
+}
+
+export async function createComment(req:Request , res:Response) {
+  const ThreadID = req.params.threadID;
+  const { content } = req.body;
+
+  await db.execute(
+    "INSERT INTO comment(ThreadID , UserID , Content , CreatedDate) VALUES(?, ?, ?, NOW())",
+    [ThreadID , req.session.userID , content]
+  );
+
+  console.log(ThreadID , content);
+  res.redirect(`/forum/${ThreadID}`);
 }

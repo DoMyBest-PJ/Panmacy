@@ -50,7 +50,7 @@
           <div class="thread-list">
 
             <% threads.forEach((t,i) => { %>
-              <a href="/forum/<%= t.ThreadID%>">
+              <a href="/forum/<%= t.ThreadID %>">
               <article class="card thread-card" data-date="<%= new Date(t.CreatedDate).getTime() %>" data-comments="<%= Number(t.CommentCount) %>">
                 <div class="thread-card__head">
                   <div class="avatar avatar--1"><%=  name[i].charAt(0) %></div>
@@ -67,8 +67,9 @@
                   </div>
                 </div>
                 <h3 class="thread-card__title"><%= t.Title %></h3>
-                <span class="badge"><%= t.Category %></span>
-                <p class="thread-card__excerpt forum-detail"><%= t.Description %></p>
+                <p class="thread-card__excerpt"><%= t.Description %></p>
+                <div class="thread-card__tags"><span class="tag"><%= t.CommentCount > 0 ? 'Answered' : 'Un-answered' %></span></div>
+                <p class="thread-card__excerpt forum-detail"></p>
                 <div class="thread-card__actions">
                   <button class="thread-action"><svg viewBox="0 0 17 17" fill="none">
                       <path d="M2 3h13v8H6.5L2 15V3z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" />
@@ -206,18 +207,7 @@
             <label class="field__label" for="thread-title">Title</label>
             <input type="text" id="thread-title" class="input" maxlength="255" placeholder="e.g. Is it safe to take ibuprofen with antibiotics?" required name="title">
           </div>
-          <div class="field" style="margin-bottom:16px">
-            <label class="field__label" for="thread-category">Category</label>
-            <select id="thread-category" name="category" class="select" style="width:100%;height:46px">
-              <option>General Health</option>
-              <option>Pain Relief / Fever</option>
-              <option>Cold &amp; Flu</option>
-              <option>Allergy</option>
-              <option>Digestive</option>
-              <option>Skin Care</option>
-              <option>Medication FAQ</option>
-            </select>
-          </div>
+
           <div class="field">
             <label class="field__label" for="thread-body">Your question or discussion</label>
             <textarea id="thread-body" name="body" class="input" style="height:140px;padding-top:12px;resize:vertical" placeholder="Describe your question in detail..." required></textarea>

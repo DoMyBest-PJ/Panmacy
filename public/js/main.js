@@ -124,20 +124,4 @@
       window.pmCloseModal();
     }
   });
-
-  // Form submits (use delegation in case forms are after this script)
-  document.addEventListener('submit', (e) => {
-    if (e.target && e.target.id === 'new-thread-form') {
-
-      window.pmCloseModal('modal-new-thread');
-      window.pmToast('Thread posted successfully');
-      e.target.reset();
-    }
-    if (e.target && e.target.id === 'forum-composer-form') {
-
-      window.pmCloseModal('modal-forum');
-      window.pmToast('Posted to Health Forum');
-      e.target.reset();
-    }
-  });
 })();

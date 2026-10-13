@@ -66,14 +66,20 @@
               Pharmacy
             </button>
             <div class="dropdown-submenu__list">
-              <% if (userType === "CUSTOMER") { %>
               <a href="pharmacist-signup" class="dropdown-item" role="menuitem">Register pharmacy</a>
-              <% } %>
             </div>
           </div>
-          <div class="dropdown-divider"></div>
+
+          <% } else { %>
+          <a href="/pharmacy-dashboard" class="dropdown-item" role="menuitem"> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M3 10h18" />
+              <path d="M5 10V21H19V10" />
+              <path d="M3 10L5 3H19L21 10" />
+              <path d="M9 21V14H15V21" />
+            </svg> Dashboard </a>
 
           <% } %>
+          <div class="dropdown-divider"></div>
 
 
           <a href="/signout" class="dropdown-item dropdown-item--danger" role="menuitem">
