@@ -1,7 +1,7 @@
 {
   "name": "panmacy",
   "version": "1.0.0",
-  "description": "ใช้ Node.js + express + ejs กุยังไม่อยาก php ตอนนี้นาจา",
+  "description": "PANMACY",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
