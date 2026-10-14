@@ -82,7 +82,7 @@ INSERT INTO Pharmacy (PharmacyID, PharmacistID, PharmacyName, Address, ContactNu
 
 
 -- ---------------------------------------------------------------------
--- 5. Product (20 rows)
+-- 5. PharmacyProduct (20 rows)
 -- ---------------------------------------------------------------------
 INSERT INTO PharmacyProduct (PharmacyProductID, PharmacyID, ProductName, Description, Quantity, Price, Category) VALUES
 (1,  1, 'Paracetamol 500 mg (10 tablets)', 'Relieves pain and reduces fever.', 200, 25.00, 'Pain & Fever Relief'),
@@ -108,7 +108,7 @@ INSERT INTO PharmacyProduct (PharmacyProductID, PharmacyID, ProductName, Descrip
 
 
 -- ---------------------------------------------------------------------
--- 7. ShoppingCart (12 rows) : 1 customer = 1 cart (CartID = CustomerID)
+-- 6. ShoppingCart (12 rows) : 1 customer = 1 cart (CartID = CustomerID)
 -- ---------------------------------------------------------------------
 INSERT INTO ShoppingCart (CartID, CustomerID, CreatedDate, Status) VALUES
 (1,  1,  '2026-01-10 09:05:00', 'ACTIVE'),
@@ -126,7 +126,7 @@ INSERT INTO ShoppingCart (CartID, CustomerID, CreatedDate, Status) VALUES
 
 
 -- ---------------------------------------------------------------------
--- 8. CartItem (20 rows) : items currently in carts (can mix pharmacies)
+-- 7. CartItem (20 rows) : items currently in carts (can mix pharmacies)
 --    Carts 7, 8, 9 are CHECKED_OUT, so they have no items left.
 -- ---------------------------------------------------------------------
 INSERT INTO CartItem (CartItemID, CartID, PharmacyProductID, Quantity) VALUES
@@ -153,7 +153,7 @@ INSERT INTO CartItem (CartItemID, CartID, PharmacyProductID, Quantity) VALUES
 
 
 -- ---------------------------------------------------------------------
--- 9. Order (10 rows) : CartID must belong to the same customer
+-- 8. Order (10 rows) : CartID must belong to the same customer
 --    TotalAmount = SUM(Quantity * UnitPrice) of its OrderItem rows
 -- ---------------------------------------------------------------------
 INSERT INTO `Order` (OrderID, CustomerID, CartID, OrderDate, TotalAmount, Status) VALUES
@@ -170,7 +170,7 @@ INSERT INTO `Order` (OrderID, CustomerID, CartID, OrderDate, TotalAmount, Status
 
 
 -- ---------------------------------------------------------------------
--- 10. OrderItem (20 rows) : UnitPrice = price snapshot at purchase time
+-- 9. OrderItem (20 rows) : UnitPrice = price snapshot at purchase time
 -- ---------------------------------------------------------------------
 INSERT INTO OrderItem (OrderItemID, OrderID, PharmacyProductID, Quantity, UnitPrice) VALUES
 (1,  1,  1,  2, 25.00),
@@ -196,7 +196,7 @@ INSERT INTO OrderItem (OrderItemID, OrderID, PharmacyProductID, Quantity, UnitPr
 
 
 -- ---------------------------------------------------------------------
--- 11. ForumThread (20 rows) : created by customers and pharmacists
+-- 10. ForumThread (20 rows) : created by customers and pharmacists
 -- ---------------------------------------------------------------------
 INSERT INTO ForumThread (ThreadID, UserID, Title, Description, CreatedDate) VALUES
 (1,  1,  'Is it harmful to take paracetamol often?',                    'I have had frequent headaches lately and take paracetamol almost every day. Is that dangerous?',                      '2026-08-01 09:15:00'),
@@ -222,7 +222,7 @@ INSERT INTO ForumThread (ThreadID, UserID, Title, Description, CreatedDate) VALU
 
 
 -- ---------------------------------------------------------------------
--- 12. Comment (20 rows) : each comment is posted AFTER its thread
+-- 11. Comment (20 rows) : each comment is posted AFTER its thread
 -- ---------------------------------------------------------------------
 INSERT INTO Comment (CommentID, ThreadID, UserID, Content, CreatedDate) VALUES
 (1,  1,  13, 'Follow the dose on the label and keep the recommended interval between doses. If you need it for several days in a row, please talk to a pharmacist or doctor.', '2026-08-01 10:00:00'),
