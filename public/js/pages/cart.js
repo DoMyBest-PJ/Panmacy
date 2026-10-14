@@ -1,66 +1,230 @@
 (function () {
-  const DELIVERY_PER_PHARMACY = 20;
+    const DELIVERY_PER_PHARMACY = 20;
 
-  function formatBaht(n) { return '฿' + n.toLocaleString('th-TH'); }
-
-  function recalcItem(item) {
-    const price = parseFloat(item.dataset.price);
-    const qtyInput = item.querySelector('[data-qty-input]');
-    const qty = Math.max(1, parseInt(qtyInput.value, 10) || 1);
-    qtyInput.value = qty;
-    item.querySelector('[data-line-total]').textContent = formatBaht(price * qty);
-    return { qty, lineTotal: price * qty };
-  }
-
-  function recalcAll() {
-    const items = document.querySelectorAll('[data-item]');
-    let subtotal = 0;
-    let totalQty = 0;
-    const pharmacies = new Set();
-    items.forEach((item) => {
-      const { qty, lineTotal } = recalcItem(item);
-      subtotal += lineTotal;
-      totalQty += qty;
-      pharmacies.add(item.dataset.pharmacy);
-    });
-    const delivery = pharmacies.size * DELIVERY_PER_PHARMACY;
-    const subtotalEl = document.querySelector('[data-summary-subtotal]');
-    const totalEl = document.querySelector('[data-summary-total]');
-    if (subtotalEl) subtotalEl.textContent = formatBaht(subtotal) ;
-    if (totalEl) totalEl.textContent = formatBaht(subtotal + delivery);
-
-    // Remove empty pharmacy groups
-    document.querySelectorAll('.pharmacy-group').forEach((group) => {
-      if (!group.querySelector('[data-item]')) group.remove();
-    });
-
-    // Empty cart state
-    const container = document.querySelector('[data-group="cart-items"]');
-    if (items.length === 0 && container && !container.querySelector('.empty-cart')) {
-      container.innerHTML = `
-        <div class="card empty-cart">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M3 4h1.6L6 12.5A1.5 1.5 0 007.5 14h6a1.5 1.5 0 001.5-1.2L16.5 6.5H5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <h3>ตะกร้าของคุณว่างเปล่า</h3>
-          <p>เลือกซื้อยาและเวชภัณฑ์จากร้านยาที่ไว้ใจได้</p>
-          <a href="index.html" class="btn btn--primary" style="margin-top:16px;">เลือกซื้อสินค้า</a>
-        </div>`;
+    function formatBaht(n) {
+        return "฿" + n.toLocaleString("th-TH", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
     }
-  }
 
-  document.querySelectorAll('[data-item]').forEach((item) => {
-    const minus = item.querySelector('[data-qty-minus]');
-    const plus = item.querySelector('[data-qty-plus]');
-    const qtyInput = item.querySelector('[data-qty-input]');
-    minus.addEventListener('click', () => { qtyInput.value = Math.max(1, (parseInt(qtyInput.value, 10) || 1) - 1); recalcAll(); });
-    plus.addEventListener('click', () => { qtyInput.value = (parseInt(qtyInput.value, 10) || 1) + 1; recalcAll(); });
-    qtyInput.addEventListener('change', recalcAll);
+    function getItems() {
+        return [...document.querySelectorAll("[data-item]")];
+    }
 
-    item.querySelector('[data-remove-item]').addEventListener('click', () => {
-      item.remove();
-      recalcAll();
-      window.pmToast('ลบสินค้าออกจากตะกร้าแล้ว');
+    function recalcItem(item) {
+        const price = Number(item.dataset.price);
+        const input = item.querySelector("[data-qty-input]");
+        const qty = Math.max(
+            1,
+            parseInt(input.value, 10) || 1
+        );
+
+        input.value = qty;
+
+        const lineTotal = price * qty;
+
+        item.querySelector("[data-line-total]").textContent =
+            formatBaht(lineTotal);
+
+        return lineTotal;
+    }
+
+    function recalcAll() {
+        const items = getItems();
+        let subtotal = 0;
+        const pharmacies = new Set();
+
+        items.forEach((item) => {
+            subtotal += recalcItem(item);
+            pharmacies.add(item.dataset.pharmacy);
+        });
+
+        const delivery = pharmacies.size * DELIVERY_PER_PHARMACY;
+
+        const subtotalEl =
+            document.querySelector("[data-summary-subtotal]");
+        const deliveryEl =
+            document.querySelector("[data-delivery-fee]");
+        const totalEl =
+            document.querySelector("[data-summary-total]");
+
+        if (subtotalEl) {
+            subtotalEl.textContent = formatBaht(subtotal);
+        }
+
+        if (deliveryEl) {
+            deliveryEl.textContent = formatBaht(delivery);
+        }
+
+        if (totalEl) {
+            totalEl.textContent = formatBaht(subtotal + delivery);
+        }
+
+        const checkout = document.querySelector("[data-checkout]");
+        if (checkout) {
+            checkout.disabled = items.length === 0;
+        }
+
+        // Remove empty pharmacy groups
+        document.querySelectorAll(".pharmacy-group").forEach((group) => {
+            if (!group.querySelector("[data-item]")) {
+                group.remove();
+            }
+        });
+    }
+
+    async function sendRequest(url, method, body) {
+        const options = {
+            method,
+            headers: {
+                "Content-Type": "application/json"
+            }
+        };
+
+        if (body !== undefined) {
+            options.body = JSON.stringify(body);
+        }
+
+        const response = await fetch(url, options);
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            throw new Error(result.message || "Request failed");
+        }
+
+        return result;
+    }
+
+    // Event delegation: รองรับรายการสินค้าในหน้า Cart
+    document.addEventListener("click", async (event) => {
+        const button = event.target.closest(
+            "[data-qty-minus], [data-qty-plus], [data-remove-item]"
+        );
+
+        if (!button) return;
+
+        const item = button.closest("[data-item]");
+        if (!item || button.disabled) return;
+
+        const itemID = item.dataset.cartItemId;
+        const input = item.querySelector("[data-qty-input]");
+        const oldQty = Number(input.value);
+        const stock = Number(item.dataset.stock);
+
+        // Remove item
+        if (button.hasAttribute("data-remove-item")) {
+            if (!confirm("ต้องการลบสินค้านี้ออกจากตะกร้าหรือไม่?")) {
+                return;
+            }
+
+            button.disabled = true;
+
+            try {
+                const result = await sendRequest(
+                    `/cart/item/${itemID}`,
+                    "DELETE"
+                );
+
+                window.pmUpdateCartBadge(result.cartItemCount);
+                item.remove();
+                recalcAll();
+                if (result.cartItemCount === 0) {
+                    window.location.reload();
+                }
+
+                if (window.pmToast) {
+                    window.pmToast("ลบสินค้าออกจากตะกร้าแล้ว");
+                }
+            } catch (error) {
+                alert(error.message);
+                button.disabled = false;
+            }
+
+            return;
+        }
+
+        // Change quantity
+        let newQty = oldQty;
+
+        if (button.hasAttribute("data-qty-minus")) {
+            newQty--;
+        } else {
+            newQty++;
+        }
+
+        if (newQty < 1) return;
+
+        if (newQty > stock) {
+            alert("จำนวนสินค้าเกินสต็อกที่มี");
+            return;
+        }
+
+        const buttons = item.querySelectorAll("button");
+        buttons.forEach((btn) => btn.disabled = true);
+
+        try {
+            const result = await sendRequest(
+                `/cart/item/${itemID}`,
+                "PATCH",
+                { quantity: newQty }
+            );
+
+            window.pmUpdateCartBadge(result.cartItemCount);
+            input.value = newQty;
+            recalcAll();
+
+            if (window.pmToast) {
+                window.pmToast("อัปเดตจำนวนสินค้าแล้ว");
+            }
+        } catch (error) {
+            alert(error.message);
+        } finally {
+            buttons.forEach((btn) => btn.disabled = false);
+        }
     });
-  });
 
-  recalcAll();
+    // Manual quantity input
+    document.addEventListener("change", async (event) => {
+        const input = event.target.closest("[data-qty-input]");
+        if (!input) return;
+
+        const item = input.closest("[data-item]");
+        const itemID = item.dataset.cartItemId;
+        const oldQty = Number(input.defaultValue);
+        const stock = Number(item.dataset.stock);
+
+        let quantity = Number(input.value);
+
+        if (!Number.isInteger(quantity) || quantity < 1) {
+            quantity = 1;
+        }
+
+        if (quantity > stock) {
+            quantity = stock;
+        }
+
+        if (quantity < 1) {
+            input.value = oldQty;
+            return;
+        }
+
+        input.value = quantity;
+
+        try {
+            const result = await sendRequest(
+                `/cart/item/${itemID}`,
+                "PATCH",
+                { quantity }
+            );
+
+            window.pmUpdateCartBadge(result.cartItemCount);
+            recalcAll();
+        } catch (error) {
+            alert(error.message);
+            window.location.reload();
+        }
+    });
+
+    recalcAll();
 })();

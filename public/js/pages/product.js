@@ -13,9 +13,10 @@
   const qtyInput = document.querySelector('[data-qty-input]');
   const minusBtn = document.querySelector('[data-qty-minus]');
   const plusBtn = document.querySelector('[data-qty-plus]');
-  const UNIT_PRICE = 25;
+  const priceElement = document.querySelector('[data-unit-price]');
+  const UNIT_PRICE = priceElement ? Number(priceElement.dataset.unitPrice) : 0;
   const addBtn = document.querySelector('[data-add-to-cart]');
-  const MAX_QTY = 10;
+  const MAX_QTY = qtyInput ? Number(qtyInput.max) || 10 : 10;
 
   function clampQty(val) {
     let n = parseInt(val, 10);
@@ -26,9 +27,9 @@
   function syncQty() {
     const qty = clampQty(qtyInput.value);
     qtyInput.value = qty;
-    minusBtn.disabled = qty <= 1;
-    plusBtn.disabled = qty >= MAX_QTY;
-    if (addBtn) addBtn.textContent = `เพิ่มลงตะกร้า — ฿${qty * UNIT_PRICE}`;
+    if (minusBtn) minusBtn.disabled = qty <= 1;
+    if (plusBtn) plusBtn.disabled = qty >= MAX_QTY;
+    if (addBtn) addBtn.textContent = `Add to cart — ฿${qty * UNIT_PRICE}`;
   }
   if (qtyInput) {
     minusBtn.addEventListener('click', () => { qtyInput.value = clampQty(qtyInput.value) - 1; syncQty(); });
@@ -38,18 +39,35 @@
   }
 
   if (addBtn) {
-    addBtn.addEventListener('click', () => {
+    addBtn.addEventListener('click', async () => {
+      if (addBtn.disabled) return;
+
+      const originalText = addBtn.textContent;
+      addBtn.disabled = true;
+      addBtn.textContent = 'Adding...';
+
       try {
-        const cart = JSON.parse(localStorage.getItem('pm_cart') || '[]');
-        const name = document.querySelector('.product-info__name').textContent.trim();
-        const qty = clampQty(qtyInput.value);
-        const existing = cart.find((i) => i.name === name);
-        if (existing) existing.qty += qty;
-        else cart.push({ name, qty });
-        localStorage.setItem('pm_cart', JSON.stringify(cart));
-        window.pmUpdateCartBadge();
-      } catch (e) {}
-      window.pmToast('เพิ่มลงตะกร้าแล้ว');
+        const response = await fetch('/cart/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            productID: addBtn.dataset.productId,
+            quantity: clampQty(qtyInput.value)
+          })
+        });
+        const result = await response.json();
+        if (!response.ok || !result.success) {
+          throw new Error(result.message || 'Unable to add product.');
+        }
+
+        window.pmUpdateCartBadge(result.cartItemCount);
+        window.pmToast(result.message);
+      } catch (error) {
+        alert(error.message || 'Unable to add product.');
+      } finally {
+        addBtn.disabled = false;
+        syncQty();
+      }
     });
   }
 
@@ -62,4 +80,5 @@
       document.querySelector(`[data-panel="${btn.dataset.tab}"]`).classList.add('is-active');
     });
   });
+
 })();

@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="css/variables.css">
 <link rel="stylesheet" href="css/base.css">
 <link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/pages/auth.css">
 </head>
 <body>
 
@@ -18,23 +19,28 @@
   <h1 style="font-family:var(--font-display);font-size:var(--fs-h2);margin-bottom:var(--sp-6)">My Profile</h1>
   <div class="panel">
     <div class="panel__body">
-      <form id="profile-form" style="display:grid;gap:16px">
+      <form id="profile-form" style="display:grid;gap:16px" method="post" action="/profile-change">
         <div class="field">
           <label class="field__label" for="pf-name">Full name</label>
-          <input type="text" id="pf-name" class="input" value="Nattawat Srisuk">
+          <input type="text" id="pf-name" class="input" value="<%= name %>" name="name">
         </div>
         <div class="field">
           <label class="field__label" for="pf-email">Email</label>
-          <input type="email" id="pf-email" class="input" value="nattawat@email.com">
+          <input type="email" id="pf-email" class="input" value="<%= email %>" name="email">
+        </div>
+        <div class="field">
+          <label class="field__label" for="pf-address">Password</label>
+          <input type="text" id="pf-address" class="input" value="<%= password %>" name="password">
         </div>
         <div class="field">
           <label class="field__label" for="pf-phone">Phone</label>
-          <input type="tel" id="pf-phone" class="input" value="081-234-5678">
+          <input type="tel" id="pf-phone" class="input" value="<%= phone %>" name="phone">
         </div>
         <div class="field">
           <label class="field__label" for="pf-address">Default address</label>
-          <input type="text" id="pf-address" class="input" value="42 Soi Sukhumvit 21, Bangkok">
+          <input type="text" id="pf-address" class="input" value="<%= address %>" name="address">
         </div>
+        <div class="<%= msg == "Successfully changed" ? "success-message" : "error-message" %>"><%- msg %></div>
         <button type="submit" class="btn btn--primary" style="justify-self:start">Save changes</button>
       </form>
     </div>
@@ -44,7 +50,6 @@
 <script src="js/main.js"></script>
 <script>
 document.getElementById('profile-form').addEventListener('submit', (e) => {
-  e.preventDefault();
   pmToast('Profile updated');
 });
 </script>

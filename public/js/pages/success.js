@@ -8,10 +8,4 @@
       window.pmToast('คัดลอกหมายเลขคำสั่งซื้อแล้ว');
     });
   }
-
-  // Clear the demo cart once an order completes
-  try {
-    localStorage.setItem('pm_cart', '[]');
-    window.pmUpdateCartBadge();
-  } catch (e) {}
 })();

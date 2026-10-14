@@ -1,7 +1,37 @@
 import express from "express";
 import session from "express-session";
 import path from "path";
-import {homepage , login , forum , cart , profile , orders , admin , pharmacist_signup , pharmacy_dashboard} from "./controllers/controll"
+import {
+  homepage,
+  pharmacy_signup,
+  signout,
+  signupUser,
+  login,
+  forum,
+  cart,
+  profile,
+  orders,
+  admin,
+  pharmacist_signup,
+  pharmacy_dashboard,
+  loginUser,
+  signup,
+  profile_change,
+  create_thread,
+  createComment,
+  payment_success,
+  checkout,
+  profile_pharmacist_change,
+  pharmacy_update,
+  pharmacy_add,
+  pharmacy_edit,
+  pharmacy_delete,
+  pharmacy_update_order_status
+} from "./controllers/controll";
+import { db, Connection_status } from "./models/db";
+import forumRouter from "./models/forum";
+import productRouter from "./models/product";
+import cartRouter from "./models/cart";
 
 const app = express();
 const PORT = 3000;
@@ -11,7 +41,9 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "..", "public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
 app.use(
+  //session data
   session({
     secret: "mysecret",
     resave: false,
@@ -19,31 +51,129 @@ app.use(
   }),
 );
 
-app.use((req, res, next) => {
-    res.locals.activePage = null;
+declare module "express-session" {
+  // session value
+  interface SessionData {
+    userID?: number;
+    userType?: "CUSTOMER" | "PHARMACIST";
+    tempMsg?: string;
+  }
+}
+
+app.use(async (req, res, next) => {
+  //  ตัวแปรถาวร + ทำงานทุกครั้งที่เปลี่ยน route
+  try {
+    res.locals.activePage = undefined;
+    res.locals.username = undefined;
+    res.locals.user_Email = undefined;
+    res.locals.userID = req.session.userID;
+    res.locals.userType = req.session.userType;
+    res.locals.isLogin = !!req.session.userID;
+    res.locals.cartItemCount = 0;
+
+    if (req.session.userID) {
+      const [rows]: any = await db.execute(
+        `SELECT u.Username, u.Email, c.CustomerName FROM user u INNER JOIN customer c ON u.UserID = c.UserID WHERE u.UserID = ?`,
+        [req.session.userID],
+      );
+
+      if (rows.length > 0) {
+        res.locals.username = rows[0].Username;
+        if (rows[0].CustomerName != "Anonymous") {
+          res.locals.username = rows[0].CustomerName;
+        }
+        res.locals.user_Email = rows[0].Email;
+      }
+
+      if (res.locals.userType === "CUSTOMER") {
+        const [cartRows]: any = await db.execute(
+          `SELECT COALESCE(SUM(ci.Quantity), 0) AS CartItemCount
+           FROM ShoppingCart sc
+           LEFT JOIN CartItem ci ON ci.CartID = sc.CartID
+           WHERE sc.CustomerID = ?
+             AND sc.Status = 'ACTIVE'`,
+          [req.session.userID],
+        );
+        res.locals.cartItemCount = Number(cartRows[0].CartItemCount);
+      }
+
+      if (res.locals.userType === "PHARMACIST") {
+        const [rows]: any = await db.execute(
+          "SELECT u.Email , p.PharmacistName FROM user u INNER JOIN pharmacist p ON u.UserID = p.UserID WHERE u.UserID = ?",
+          [req.session.userID],
+        );
+
+        if (rows.length > 0) {
+          res.locals.username = rows[0].PharmacistName;
+          res.locals.user_Email = rows[0].Email;
+        }
+      }
+    }
+
     next();
+  } catch (err) {
+    next(err);
+  }
 });
 
-// หน้าแรก
-app.get("/",homepage);
+Connection_status(); // ใช้ run function ใน db.ts เฉยๆใส่ตรงนี้เเล้วดูรกๆ
 
-app.get("/admin",admin);
+app.get("/", homepage);
 
-app.get("/login",login);
+app.get("/admin", admin);
 
-app.get("/forum",forum);
+app.get("/login", login);
 
-app.get("/cart",cart);
+app.get("/forum", forum);
 
-app.get("/profile",profile);
+app.get("/cart", cart);
 
-app.get("/orders",orders);
+app.get("/profile", profile);
 
-app.get("/pharmacist-signup",pharmacist_signup);
+app.get("/orders", orders);
 
-app.get("/pharmacy-dashboard",pharmacy_dashboard);
+app.get("/pharmacist-signup", pharmacist_signup);
 
-// Start server
+app.get("/pharmacy-dashboard", pharmacy_dashboard);
+
+app.post("/pharmacy-signup", pharmacy_signup);
+
+app.post("/user-login", loginUser);
+
+app.get("/signup", signup);
+
+app.post("/sign-up", signupUser);
+
+app.get("/signout", signout);
+
+app.post("/profile-change", profile_change);
+
+app.post("/profile-pharmacist-change", profile_pharmacist_change);
+
+app.use("/forum", forumRouter);
+
+app.post("/create-thread", create_thread);
+
+app.post("/thread/:threadID/comment" , createComment);
+
+app.use("/product", productRouter);
+
+app.get("/payment-success/:orderID", payment_success);
+
+app.use("/cart", cartRouter);
+
+app.post("/cart/checkout", checkout);
+
+app.post("/pharmacy-update", pharmacy_update);
+
+app.post("/pharmacy-add", pharmacy_add);
+
+app.post("/pharmacy-edit/:productID", pharmacy_edit);
+
+app.post("/pharmacy-delete/:productID", pharmacy_delete);
+
+app.post("/pharmacy-order/:orderID/status", pharmacy_update_order_status);
+
 app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
+  console.log(`Server running at http://localhost:${PORT}`);
 });

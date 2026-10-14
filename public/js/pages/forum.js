@@ -1,19 +1,42 @@
 (function () {
-  // Like toggle
-  document.querySelectorAll('[data-like]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const countEl = btn.querySelector('[data-like-count]');
-      let count = parseInt(countEl.textContent, 10);
-      const liked = btn.classList.toggle('is-liked');
-      countEl.textContent = liked ? count + 1 : count - 1;
-    });
-  });
 
-  // Tab switching (visual only in this demo)
-  document.querySelectorAll('.forum-tab').forEach((tab) => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.forum-tab').forEach((t) => t.classList.remove('is-active'));
-      tab.classList.add('is-active');
+const tabs = document.querySelectorAll(".forum-tab");
+const threadList = document.querySelector(".thread-list");
+
+tabs.forEach(tab => {
+  tab.addEventListener("click", () => {
+    // เปลี่ยนสถานะปุ่มที่เลือก
+    tabs.forEach(button => {
+      button.classList.remove("is-active");
+    });
+    tab.classList.add("is-active");
+
+    // ดึงกระทู้ทั้งหมดที่แสดงอยู่
+    const threads = Array.from(
+      threadList.querySelectorAll(".thread-card")
+    );
+
+    // เรียงกระทู้ตามปุ่มที่เลือก
+    if (tab.dataset.sort === "latest") {
+      threads.sort((a, b) =>
+        Number(b.dataset.date) - Number(a.dataset.date)
+      );
+    } else if (tab.dataset.sort === "popular") {
+      threads.sort((a, b) =>
+        Number(b.dataset.comments) - Number(a.dataset.comments)
+      );
+    }
+
+    // เปลี่ยนตำแหน่งการ์ดในหน้าเว็บ
+    threads.forEach(thread => {
+      const item = thread.parentElement.tagName === "A"
+        ? thread.parentElement
+        : thread;
+      threadList.appendChild(item);
     });
   });
+});
+
+
+
 })();

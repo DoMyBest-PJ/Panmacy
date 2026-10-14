@@ -20,6 +20,12 @@
 .forum-tab { padding: var(--sp-2) var(--sp-4); border-radius: var(--r-pill); font-size: var(--fs-small); font-weight: 600; color: var(--pm-ink-500); border: 1px solid var(--pm-line-200); }
 .forum-tab.is-active { background: var(--pm-green-800); border-color: var(--pm-green-800); color: var(--pm-white); }
 .forum-tab:hover:not(.is-active) { border-color: var(--pm-green-600); color: var(--pm-green-800); }
+.forum-detail {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  line-clamp: 2;
+  overflow: hidden;
+}
 
 /* ---- Thread card ---- */
 .thread-list { display: flex; flex-direction: column; gap: var(--sp-4); }

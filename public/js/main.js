@@ -27,21 +27,16 @@
     toastTimer = setTimeout(() => el.classList.remove('is-visible'), 2200);
   };
 
-  // Cart badge count
-  function getCartCount() {
-    try {
-      const cart = JSON.parse(localStorage.getItem('pm_cart') || '[]');
-      return cart.reduce((sum, item) => sum + (item.qty || 1), 0);
-    } catch (e) { return 0; }
-  }
-  window.pmUpdateCartBadge = function () {
+  // Cart badge count is supplied by the database-backed cart endpoints.
+  window.pmUpdateCartBadge = function (count) {
+    if (!Number.isSafeInteger(count) || count < 0) {
+      throw new Error('Invalid cart item count.');
+    }
     document.querySelectorAll('[data-cart-badge]').forEach((el) => {
-      const count = getCartCount();
       el.textContent = count;
       el.style.display = count > 0 ? 'grid' : 'none';
     });
   };
-  window.pmUpdateCartBadge();
 
   // ---- Profile dropdown ----
   const profileBtn = document.querySelector('[data-profile-toggle]');
@@ -122,22 +117,6 @@
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       window.pmCloseModal();
-    }
-  });
-
-  // Form submits (use delegation in case forms are after this script)
-  document.addEventListener('submit', (e) => {
-    if (e.target && e.target.id === 'new-thread-form') {
-      e.preventDefault();
-      window.pmCloseModal('modal-new-thread');
-      window.pmToast('Thread posted successfully');
-      e.target.reset();
-    }
-    if (e.target && e.target.id === 'forum-composer-form') {
-      e.preventDefault();
-      window.pmCloseModal('modal-forum');
-      window.pmToast('Posted to Health Forum');
-      e.target.reset();
     }
   });
 })();

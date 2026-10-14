@@ -101,12 +101,14 @@
   grid-template-columns: repeat(3, 1fr);
   gap: var(--sp-5);
 }
+.product-grid__empty { grid-column: 1 / -1; color: var(--pm-ink-500); }
 
 .product-card {
   display: flex; flex-direction: column;
   overflow: hidden;
   transition: box-shadow .18s ease, transform .18s ease;
 }
+.product-card[hidden] { display: none; }
 .product-card:hover { box-shadow: var(--shadow-card); transform: translateY(-2px); }
 
 .product-card__media {
