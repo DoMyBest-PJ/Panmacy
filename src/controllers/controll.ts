@@ -459,47 +459,61 @@ export function signout(req: Request, res: Response) {
 }
 
 export async function pharmacy_signup(req: Request, res: Response) {
+  const con = await db.getConnection();
+  let transactionStarted = false;
+
   try {
     const { Pharmacy_name, Pharmacist_name, phone, address, license_number } =
       req.body;
 
-    const [rows]: any = await db.execute(
-      "SELECT LicenseNumber FROM Pharmacist",
+    await con.beginTransaction();
+    transactionStarted = true;
+
+    const [rows]: any = await con.execute(
+      "SELECT LicenseNumber FROM Pharmacist WHERE LicenseNumber = ?",
+      [license_number],
     );
 
     if (rows.length > 0) {
-      if (rows[0].LicenseNumber === license_number) {
-        req.session.tempMsg = "LicenseNumber already exists.";
-        return res.redirect("/pharmacist-signup");
-      }
+      await con.rollback();
+      transactionStarted = false;
+      req.session.tempMsg = "LicenseNumber already exists.";
+      return res.redirect("/pharmacist-signup");
     }
 
-    await db.execute(
+    await con.execute(
       "INSERT INTO pharmacist(UserID,PharmacistName, LicenseNumber, Phone) VALUES (?,?,?,?);",
       [res.locals.userID, Pharmacist_name, license_number, null],
     );
-    await db.execute(
+    await con.execute(
       "INSERT INTO pharmacy(PharmacistID, PharmacyName, Address, ContactNumber, Description) VALUES (?,?,?,?,NULL);",
       [res.locals.userID, Pharmacy_name, address, phone],
     );
-    await db.execute("DELETE FROM customer WHERE UserID = ?", [
-      res.locals.userID,
-    ]);
-    await db.execute("UPDATE user SET role = 'PHARMACIST' WHERE UserID = ?", [
-      res.locals.userID,
-    ]);
-
-    await db.execute(
-      "DELETE FROM shoppingcart WHERE `shoppingcart`.`CartID` = ?",
+    await con.execute(
+      "UPDATE shoppingcart SET Status = 'ABANDONED' WHERE CustomerID = ? AND Status = 'ACTIVE'",
       [res.locals.userID],
     );
+    await con.execute("UPDATE user SET role = 'PHARMACIST' WHERE UserID = ?", [
+      res.locals.userID,
+    ]);
 
+    await con.commit();
+    transactionStarted = false;
     req.session.userType = "PHARMACIST";
     return res.redirect("/");
   } catch (e) {
+    if (transactionStarted) {
+      try {
+        await con.rollback();
+      } catch (rollbackError) {
+        console.error("Failed to roll back pharmacy signup:", rollbackError);
+      }
+    }
     console.log(e);
     req.session.tempMsg = "Something went wrong.";
     return res.redirect("/pharmacist-signup");
+  } finally {
+    con.release();
   }
 }
 
