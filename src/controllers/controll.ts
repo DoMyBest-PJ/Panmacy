@@ -5,33 +5,41 @@ export async function homepage(req: Request, res: Response) {
   if (req.session.userType === "PHARMACIST") {
     return res.redirect("pharmacy-dashboard");
   }
-  const [rows]:any = await db.execute(
+  const [rows]: any = await db.execute(
     "SELECT pp.PharmacyProductID, pc.PharmacyName, pp.ProductName, pp.Description, pp.Quantity, pp.Price, pp.Category FROM pharmacy pc INNER JOIN pharmacyproduct pp ON pc.PharmacyID = pp.PharmacyID",
-    []
+    [],
   );
 
   res.render("index", { activePage: 1, rows });
 }
 
 export async function forum(req: Request, res: Response) {
-  const [threads]:any = await db.execute(
+  const [threads]: any = await db.execute(
     "SELECT ft.UserID, u.Role, ft.ThreadID, ft.Title, ft.Description, ft.CreatedDate, COUNT(c.CommentID) AS CommentCount FROM forumthread ft LEFT JOIN Comment c ON ft.ThreadID = c.ThreadID JOIN user u ON u.UserID = ft.UserID GROUP BY ft.UserID, u.Role, ft.ThreadID, ft.Title, ft.Description, ft.CreatedDate ORDER BY ft.CreatedDate DESC;",
   );
 
   const name = [];
   for (const t of threads) {
-    if(t.Role == "CUSTOMER"){
-      const [username]:any = await db.execute("SELECT CustomerName FROM customer WHERE UserID = ?",[t.UserID]);
+    if (t.Role == "CUSTOMER") {
+      const [username]: any = await db.execute(
+        "SELECT CustomerName FROM customer WHERE UserID = ?",
+        [t.UserID],
+      );
       name.push(username[0].CustomerName);
-    }else if(t.Role == "PHARMACIST"){
-      const [username]:any = await db.execute("SELECT PharmacistName FROM pharmacist WHERE UserID = ?",[t.UserID]);
+    } else if (t.Role == "PHARMACIST") {
+      const [username]: any = await db.execute(
+        "SELECT PharmacistName FROM pharmacist WHERE UserID = ?",
+        [t.UserID],
+      );
       name.push(username[0].PharmacistName);
     }
   }
 
-  const [topic]:any = await db.execute("SELECT ft.ThreadID, ft.Title, COUNT(c.CommentID) AS CommentCount FROM forumthread ft LEFT JOIN comment c ON ft.ThreadID = c.ThreadID GROUP BY ft.ThreadID, ft.Title ORDER BY CommentCount DESC LIMIT 4;");
+  const [topic]: any = await db.execute(
+    "SELECT ft.ThreadID, ft.Title, COUNT(c.CommentID) AS CommentCount FROM forumthread ft LEFT JOIN comment c ON ft.ThreadID = c.ThreadID GROUP BY ft.ThreadID, ft.Title ORDER BY CommentCount DESC LIMIT 4;",
+  );
 
-  res.render("forum", { activePage: 2 , threads , name , topic});
+  res.render("forum", { activePage: 2, threads, name, topic });
 }
 
 export function login(req: Request, res: Response) {
@@ -62,8 +70,41 @@ export async function profile(req: Request, res: Response) {
   });
 }
 
-export function orders(req: Request, res: Response) {
-  res.render("orders");
+export async function orders(req: Request, res: Response) {
+  try {
+    const customerID = res.locals.userID;
+
+    const [rows]: any = await db.execute(
+      `SELECT
+                o.OrderID ,
+                DATE_FORMAT(o.OrderDate, '%d %b %Y') AS Date,
+                GROUP_CONCAT(DISTINCT p.PharmacyName
+                    SEPARATOR ', ') AS Pharmacy,
+                GROUP_CONCAT(
+                    CONCAT(pp.ProductName, ' × ', oi.Quantity)
+                    SEPARATOR ', '
+                ) AS Items,
+                o.TotalAmount,
+                o.Status
+            FROM \`Order\` o
+            LEFT JOIN OrderItem oi
+                ON o.OrderID = oi.OrderID
+            LEFT JOIN PharmacyProduct pp
+                ON oi.PharmacyProductID = pp.PharmacyProductID
+            LEFT JOIN Pharmacy p
+                ON pp.PharmacyID = p.PharmacyID
+            WHERE o.CustomerID = ?
+            GROUP BY o.OrderID, o.OrderDate,
+                     o.TotalAmount, o.Status
+            ORDER BY o.OrderDate  `,
+      [customerID],
+    );
+
+    res.render("orders", { orders: rows });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
 }
 
 export function admin(req: Request, res: Response) {
@@ -197,14 +238,13 @@ export async function pharmacy_signup(req: Request, res: Response) {
 
 export async function profile_change(req: Request, res: Response) {
   try {
-    const { name, email,password, phone, address } = req.body;
+    const { name, email, password, phone, address } = req.body;
     const userID = req.session.userID;
 
-    await db.execute("UPDATE user SET Email = ? , Password = ? WHERE UserID = ?", [
-      email,
-      password,
-      userID,
-    ]);
+    await db.execute(
+      "UPDATE user SET Email = ? , Password = ? WHERE UserID = ?",
+      [email, password, userID],
+    );
 
     await db.execute(
       `UPDATE customer
@@ -223,23 +263,27 @@ export async function profile_change(req: Request, res: Response) {
 }
 
 export async function create_thread(req: Request, res: Response) {
-  const {title, body} = req.body;
+  const { title, body } = req.body;
   await db.execute(
     "INSERT INTO forumthread(UserID , Title , Description , CreatedDate) VALUES( ?, ?, ?, NOW())",
-    [req.session.userID,title,body]
+    [req.session.userID, title, body],
   );
   return res.redirect("/forum");
 }
 
-export async function createComment(req:Request , res:Response) {
+export async function createComment(req: Request, res: Response) {
   const ThreadID = req.params.threadID;
   const { content } = req.body;
 
   await db.execute(
     "INSERT INTO comment(ThreadID , UserID , Content , CreatedDate) VALUES(?, ?, ?, NOW())",
-    [ThreadID , req.session.userID , content]
+    [ThreadID, req.session.userID, content],
   );
 
-  console.log(ThreadID , content);
+  console.log(ThreadID, content);
   res.redirect(`/forum/${ThreadID}`);
+}
+
+export function payment_success(req: Request, res: Response) {
+  res.render("payment-success");
 }

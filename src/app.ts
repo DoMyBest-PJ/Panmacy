@@ -18,7 +18,8 @@ import {
   signup,
   profile_change,
   create_thread,
-  createComment
+  createComment,
+  payment_success
 } from "./controllers/controll";
 import { db, Connection_status } from "./models/db";
 import forumRouter from "./models/forum";
@@ -133,6 +134,8 @@ app.post("/create-thread", create_thread);
 app.post("/thread/:threadID/comment" , createComment);
 
 app.use("/product", productRouter);
+
+app.get("/payment-success", payment_success)
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
