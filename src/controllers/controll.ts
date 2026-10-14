@@ -246,7 +246,41 @@ export async function pharmacy_dashboard(req: Request, res: Response) {
 
     const [livestock]:any = await db.execute("SELECT SUM(Quantity) AS Amount FROM pharmacy pm INNER JOIN pharmacyproduct pp ON pm.PharmacyID = pp.PharmacyID WHERE pm.PharmacistID = ?",[req.session.userID]);
     const [lowstock]:any = await db.execute("SELECT COUNT(pp.Quantity) AS lowSt FROM pharmacy pm JOIN pharmacyproduct pp ON pm.PharmacyID = pp.PharmacyID WHERE pm.PharmacistID = ? AND pp.Quantity < 6;",[req.session.userID]);
-    console.log(lowstock);
+    const [orderStats]: any = await db.execute(
+      `SELECT
+          COUNT(DISTINCT o.OrderID) AS OrderCount,
+          COALESCE(SUM(oi.Quantity * oi.UnitPrice), 0) AS Revenue
+       FROM pharmacy p
+       JOIN pharmacyproduct pp ON pp.PharmacyID = p.PharmacyID
+       JOIN OrderItem oi ON oi.PharmacyProductID = pp.PharmacyProductID
+       JOIN \`Order\` o ON o.OrderID = oi.OrderID
+       WHERE p.PharmacyID = ?
+         AND o.OrderDate >= DATE_SUB(NOW(), INTERVAL 30 DAY)`,
+      [pharmacy.PharmacyID],
+    );
+    const [pharmacyOrders]: any = await db.execute(
+      `SELECT
+          o.OrderID,
+          o.OrderDate,
+          o.Status,
+          c.CustomerName,
+          GROUP_CONCAT(
+            CONCAT(pp.ProductName, ' × ', oi.Quantity)
+            ORDER BY pp.ProductName
+            SEPARATOR ', '
+          ) AS Items,
+          SUM(oi.Quantity * oi.UnitPrice) AS PharmacyTotal
+       FROM pharmacy p
+       JOIN pharmacyproduct pp ON pp.PharmacyID = p.PharmacyID
+       JOIN OrderItem oi ON oi.PharmacyProductID = pp.PharmacyProductID
+       JOIN \`Order\` o ON o.OrderID = oi.OrderID
+       JOIN Customer c ON c.UserID = o.CustomerID
+       WHERE p.PharmacyID = ?
+       GROUP BY o.OrderID, o.OrderDate, o.Status, c.CustomerName
+       ORDER BY o.OrderDate DESC`,
+      [pharmacy.PharmacyID],
+    );
+
     return res.render("pharmacy-dashboard", {
       pharname: pharmacy.PharmacyName,
       pharmacy,
@@ -254,12 +288,88 @@ export async function pharmacy_dashboard(req: Request, res: Response) {
       msg,
       activeTab,
       live : livestock[0].Amount,
-      lowS : lowstock[0].lowSt
+      lowS : lowstock[0].lowSt,
+      orderCount: Number(orderStats[0].OrderCount),
+      revenue: Number(orderStats[0].Revenue),
+      pharmacyOrders,
     });
   } catch (error) {
     console.error(error);
     return res.status(500).send("Unable to load pharmacy dashboard.");
   }
+}
+
+const PHARMACY_ORDER_STATUSES = [
+    "PENDING",
+    "CONFIRMED",
+    "PROCESSING",
+    "SHIPPED",
+    "COMPLETED",
+    "CANCELLED",
+  ] as const;
+
+export async function pharmacy_update_order_status(req: Request, res: Response) {
+    const userID = req.session.userID;
+    if (!userID || req.session.userType !== "PHARMACIST") {
+      return res.redirect("/login");
+    }
+
+    const orderID = Number(req.params.orderID);
+    const status = req.body.status;
+    if (
+      !Number.isSafeInteger(orderID) ||
+      orderID <= 0 ||
+      typeof status !== "string" ||
+      !PHARMACY_ORDER_STATUSES.includes(status as (typeof PHARMACY_ORDER_STATUSES)[number])
+    ) {
+      req.session.tempMsg = "Invalid order or status.";
+      return res.redirect("/pharmacy-dashboard?tab=orders");
+    }
+
+    try {
+      const [result]: any = await db.execute(
+        `UPDATE \`Order\` o
+         SET o.Status = ?
+         WHERE o.OrderID = ?
+           AND EXISTS (
+             SELECT 1
+             FROM OrderItem oi
+             JOIN pharmacyproduct pp ON pp.PharmacyProductID = oi.PharmacyProductID
+             JOIN pharmacy p ON p.PharmacyID = pp.PharmacyID
+             WHERE oi.OrderID = o.OrderID
+               AND p.PharmacistID = ?
+           )`,
+        [status, orderID, userID],
+      );
+
+      if (result.affectedRows === 0) {
+        const [ownedOrders]: any = await db.execute(
+          `SELECT o.Status
+           FROM \`Order\` o
+           WHERE o.OrderID = ?
+             AND EXISTS (
+               SELECT 1
+               FROM OrderItem oi
+               JOIN pharmacyproduct pp ON pp.PharmacyProductID = oi.PharmacyProductID
+               JOIN pharmacy p ON p.PharmacyID = pp.PharmacyID
+               WHERE oi.OrderID = o.OrderID
+                 AND p.PharmacistID = ?
+             )`,
+          [orderID, userID],
+        );
+        if (ownedOrders.length === 0) {
+          req.session.tempMsg = "Order not found for your pharmacy.";
+          return res.redirect("/pharmacy-dashboard?tab=orders");
+        }
+      }
+
+      req.session.tempMsg = "Order status updated.";
+      return res.redirect("/pharmacy-dashboard?tab=orders");
+    } catch (error) {
+      console.error(error);
+      req.session.tempMsg = "Unable to update order status.";
+      return res.redirect("/pharmacy-dashboard?tab=orders");
+    }
 }
 
 export async function loginUser(req: Request, res: Response) {

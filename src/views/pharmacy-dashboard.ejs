@@ -52,13 +52,13 @@
       <div class="stat-grid">
         <div class="stat-card">
           <div class="stat-card__label">Revenue (30 days)</div>
-          <div class="stat-card__value">฿128,450</div>
-          <div class="stat-card__hint">+12% vs last month</div>
+          <div class="stat-card__value">฿<%= Number(revenue).toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></div>
+          <div class="stat-card__hint">Sales from this pharmacy's products</div>
         </div>
         <div class="stat-card">
           <div class="stat-card__label">Orders (30 days)</div>
-          <div class="stat-card__value">312</div>
-          <div class="stat-card__hint">Avg ฿412 / order</div>
+          <div class="stat-card__value"><%= orderCount %></div>
+          <div class="stat-card__hint">Orders containing your products</div>
         </div>
         <div class="stat-card">
           <div class="stat-card__label">Products live</div>
@@ -77,27 +77,19 @@
               <tr><th>Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th></tr>
             </thead>
             <tbody>
-              <tr>
-                <td><strong>#PM-88421</strong><br><span style="font-size:var(--fs-xs);color:var(--pm-ink-500)">29 Sep 2026 · 14:22</span></td>
-                <td>Nattawat S.</td>
-                <td>Paracetamol ×2, Vitamin C</td>
-                <td>฿95</td>
-                <td><span class="badge badge--pending">Preparing</span></td>
-              </tr>
-              <tr>
-                <td><strong>#PM-88418</strong><br><span style="font-size:var(--fs-xs);color:var(--pm-ink-500)">29 Sep 2026 · 11:05</span></td>
-                <td>Somchai W.</td>
-                <td>Cetirizine 10mg ×1</td>
-                <td>฿45</td>
-                <td><span class="badge badge--approved">Ready</span></td>
-              </tr>
-              <tr>
-                <td><strong>#PM-88410</strong><br><span style="font-size:var(--fs-xs);color:var(--pm-ink-500)">28 Sep 2026 · 19:40</span></td>
-                <td>Arunee P.</td>
-                <td>Ibuprofen gel, Masks ×5</td>
-                <td>฿210</td>
-                <td><span class="badge badge--approved">Completed</span></td>
-              </tr>
+              <% if (pharmacyOrders.length === 0) { %>
+              <tr><td colspan="5">No orders for this pharmacy yet.</td></tr>
+              <% } else { %>
+                <% pharmacyOrders.slice(0, 3).forEach((order) => { %>
+                <tr>
+                  <td><strong>#<%= order.OrderID %></strong><br><span style="font-size:var(--fs-xs);color:var(--pm-ink-500)"><%= new Date(order.OrderDate).toLocaleString() %></span></td>
+                  <td><%= order.CustomerName %></td>
+                  <td><%= order.Items %></td>
+                  <td>฿<%= Number(order.PharmacyTotal).toFixed(2) %></td>
+                  <td><span class="badge"><%= order.Status %></span></td>
+                </tr>
+                <% }) %>
+              <% } %>
             </tbody>
           </table>
         </div>
@@ -213,44 +205,29 @@
               <tr><th>Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Actions</th></tr>
             </thead>
             <tbody>
-              <tr>
-                <td><strong>#PM-88421</strong></td>
-                <td>Nattawat S.</td>
-                <td>Paracetamol ×2, Vitamin C</td>
-                <td>฿95</td>
-                <td><span class="badge badge--pending">Preparing</span></td>
-                <td>
-                  <button type="button" class="btn btn--sm btn--primary" onclick="this.closest('tr').querySelector('.badge').className='badge badge--approved';this.closest('tr').querySelector('.badge').textContent='Ready';pmToast('Marked ready')">Mark ready</button>
-                </td>
-              </tr>
-              <tr>
-                <td><strong>#PM-88418</strong></td>
-                <td>Somchai W.</td>
-                <td>Cetirizine 10mg ×1</td>
-                <td>฿45</td>
-                <td><span class="badge badge--approved">Ready</span></td>
-                <td>
-                  <button type="button" class="btn btn--sm btn--primary" onclick="this.closest('tr').querySelector('.badge').textContent='Completed';pmToast('Order completed')">Complete</button>
-                </td>
-              </tr>
-              <tr>
-                <td><strong>#PM-88410</strong></td>
-                <td>Arunee P.</td>
-                <td>Ibuprofen gel, Masks ×5</td>
-                <td>฿210</td>
-                <td><span class="badge badge--approved">Completed</span></td>
-                <td>—</td>
-              </tr>
-              <tr>
-                <td><strong>#PM-88392</strong></td>
-                <td>Wipada N.</td>
-                <td>Omeprazole 20mg ×1</td>
-                <td>฿65</td>
-                <td><span class="badge badge--pending">New</span></td>
-                <td>
-                  <button type="button" class="btn btn--sm btn--primary" onclick="this.closest('tr').querySelector('.badge').className='badge badge--pending';this.closest('tr').querySelector('.badge').textContent='Preparing';pmToast('Accepted order')">Accept</button>
-                </td>
-              </tr>
+              <% if (pharmacyOrders.length === 0) { %>
+              <tr><td colspan="6">No orders for this pharmacy yet.</td></tr>
+              <% } else { %>
+                <% pharmacyOrders.forEach((order) => { %>
+                <tr>
+                  <td><strong>#<%= order.OrderID %></strong><br><span style="font-size:var(--fs-xs);color:var(--pm-ink-500)"><%= new Date(order.OrderDate).toLocaleString() %></span></td>
+                  <td><%= order.CustomerName %></td>
+                  <td><%= order.Items %></td>
+                  <td>฿<%= Number(order.PharmacyTotal).toFixed(2) %></td>
+                  <td><span class="badge"><%= order.Status %></span></td>
+                  <td>
+                    <form method="post" action="/pharmacy-order/<%= order.OrderID %>/status" style="display:flex;gap:8px;align-items:center">
+                      <select name="status" class="select" aria-label="Order status">
+                        <% ['PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'COMPLETED', 'CANCELLED'].forEach((status) => { %>
+                        <option value="<%= status %>" <%= order.Status === status ? 'selected' : '' %>><%= status %></option>
+                        <% }) %>
+                      </select>
+                      <button type="submit" class="btn btn--sm btn--primary">Update</button>
+                    </form>
+                  </td>
+                </tr>
+                <% }) %>
+              <% } %>
             </tbody>
           </table>
         </div>

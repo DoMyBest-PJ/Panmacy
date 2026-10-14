@@ -25,7 +25,8 @@ import {
   pharmacy_update,
   pharmacy_add,
   pharmacy_edit,
-  pharmacy_delete
+  pharmacy_delete,
+  pharmacy_update_order_status
 } from "./controllers/controll";
 import { db, Connection_status } from "./models/db";
 import forumRouter from "./models/forum";
@@ -170,6 +171,8 @@ app.post("/pharmacy-add", pharmacy_add);
 app.post("/pharmacy-edit/:productID", pharmacy_edit);
 
 app.post("/pharmacy-delete/:productID", pharmacy_delete);
+
+app.post("/pharmacy-order/:orderID/status", pharmacy_update_order_status);
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
