@@ -143,7 +143,6 @@ export async function profile(req: Request, res: Response) {
       address: rows[0].Address,
       msg,
     });
-
   } else if (res.locals.userType == "PHARMACIST") {
     const [rows]: any = await db.execute(
       "SELECT * FROM user u JOIN pharmacist p ON u.UserID = p.UserID WHERE u.UserID = ?",
@@ -238,14 +237,22 @@ export async function pharmacy_dashboard(req: Request, res: Response) {
     req.session.tempMsg = undefined;
     const requestedTab = req.query.tab;
     const activeTab =
-      requestedTab === "profile" || requestedTab === "products" || requestedTab === "orders"
+      requestedTab === "profile" ||
+      requestedTab === "products" ||
+      requestedTab === "orders"
         ? requestedTab
         : msg
           ? "products"
           : "dashboard";
 
-    const [livestock]:any = await db.execute("SELECT SUM(Quantity) AS Amount FROM pharmacy pm INNER JOIN pharmacyproduct pp ON pm.PharmacyID = pp.PharmacyID WHERE pm.PharmacistID = ?",[req.session.userID]);
-    const [lowstock]:any = await db.execute("SELECT COUNT(pp.Quantity) AS lowSt FROM pharmacy pm JOIN pharmacyproduct pp ON pm.PharmacyID = pp.PharmacyID WHERE pm.PharmacistID = ? AND pp.Quantity < 6;",[req.session.userID]);
+    const [livestock]: any = await db.execute(
+      "SELECT SUM(Quantity) AS Amount FROM pharmacy pm INNER JOIN pharmacyproduct pp ON pm.PharmacyID = pp.PharmacyID WHERE pm.PharmacistID = ?",
+      [req.session.userID],
+    );
+    const [lowstock]: any = await db.execute(
+      "SELECT COUNT(pp.Quantity) AS lowSt FROM pharmacy pm JOIN pharmacyproduct pp ON pm.PharmacyID = pp.PharmacyID WHERE pm.PharmacistID = ? AND pp.Quantity < 6;",
+      [req.session.userID],
+    );
     const [orderStats]: any = await db.execute(
       `SELECT
           COUNT(DISTINCT o.OrderID) AS OrderCount,
@@ -287,8 +294,8 @@ export async function pharmacy_dashboard(req: Request, res: Response) {
       products,
       msg,
       activeTab,
-      live : livestock[0].Amount,
-      lowS : lowstock[0].lowSt,
+      live: livestock[0].Amount,
+      lowS: lowstock[0].lowSt,
       orderCount: Number(orderStats[0].OrderCount),
       revenue: Number(orderStats[0].Revenue),
       pharmacyOrders,
@@ -300,35 +307,40 @@ export async function pharmacy_dashboard(req: Request, res: Response) {
 }
 
 const PHARMACY_ORDER_STATUSES = [
-    "PENDING",
-    "CONFIRMED",
-    "PROCESSING",
-    "SHIPPED",
-    "COMPLETED",
-    "CANCELLED",
-  ] as const;
+  "PENDING",
+  "CONFIRMED",
+  "PROCESSING",
+  "SHIPPED",
+  "COMPLETED",
+  "CANCELLED",
+] as const;
 
-export async function pharmacy_update_order_status(req: Request, res: Response) {
-    const userID = req.session.userID;
-    if (!userID || req.session.userType !== "PHARMACIST") {
-      return res.redirect("/login");
-    }
+export async function pharmacy_update_order_status(
+  req: Request,
+  res: Response,
+) {
+  const userID = req.session.userID;
+  if (!userID || req.session.userType !== "PHARMACIST") {
+    return res.redirect("/login");
+  }
 
-    const orderID = Number(req.params.orderID);
-    const status = req.body.status;
-    if (
-      !Number.isSafeInteger(orderID) ||
-      orderID <= 0 ||
-      typeof status !== "string" ||
-      !PHARMACY_ORDER_STATUSES.includes(status as (typeof PHARMACY_ORDER_STATUSES)[number])
-    ) {
-      req.session.tempMsg = "Invalid order or status.";
-      return res.redirect("/pharmacy-dashboard?tab=orders");
-    }
+  const orderID = Number(req.params.orderID);
+  const status = req.body.status;
+  if (
+    !Number.isSafeInteger(orderID) ||
+    orderID <= 0 ||
+    typeof status !== "string" ||
+    !PHARMACY_ORDER_STATUSES.includes(
+      status as (typeof PHARMACY_ORDER_STATUSES)[number],
+    )
+  ) {
+    req.session.tempMsg = "Invalid order or status.";
+    return res.redirect("/pharmacy-dashboard?tab=orders");
+  }
 
-    try {
-      const [result]: any = await db.execute(
-        `UPDATE \`Order\` o
+  try {
+    const [result]: any = await db.execute(
+      `UPDATE \`Order\` o
          SET o.Status = ?
          WHERE o.OrderID = ?
            AND EXISTS (
@@ -339,12 +351,12 @@ export async function pharmacy_update_order_status(req: Request, res: Response) 
              WHERE oi.OrderID = o.OrderID
                AND p.PharmacistID = ?
            )`,
-        [status, orderID, userID],
-      );
+      [status, orderID, userID],
+    );
 
-      if (result.affectedRows === 0) {
-        const [ownedOrders]: any = await db.execute(
-          `SELECT o.Status
+    if (result.affectedRows === 0) {
+      const [ownedOrders]: any = await db.execute(
+        `SELECT o.Status
            FROM \`Order\` o
            WHERE o.OrderID = ?
              AND EXISTS (
@@ -355,21 +367,21 @@ export async function pharmacy_update_order_status(req: Request, res: Response) 
                WHERE oi.OrderID = o.OrderID
                  AND p.PharmacistID = ?
              )`,
-          [orderID, userID],
-        );
-        if (ownedOrders.length === 0) {
-          req.session.tempMsg = "Order not found for your pharmacy.";
-          return res.redirect("/pharmacy-dashboard?tab=orders");
-        }
+        [orderID, userID],
+      );
+      if (ownedOrders.length === 0) {
+        req.session.tempMsg = "Order not found for your pharmacy.";
+        return res.redirect("/pharmacy-dashboard?tab=orders");
       }
-
-      req.session.tempMsg = "Order status updated.";
-      return res.redirect("/pharmacy-dashboard?tab=orders");
-    } catch (error) {
-      console.error(error);
-      req.session.tempMsg = "Unable to update order status.";
-      return res.redirect("/pharmacy-dashboard?tab=orders");
     }
+
+    req.session.tempMsg = "Order status updated.";
+    return res.redirect("/pharmacy-dashboard?tab=orders");
+  } catch (error) {
+    console.error(error);
+    req.session.tempMsg = "Unable to update order status.";
+    return res.redirect("/pharmacy-dashboard?tab=orders");
+  }
 }
 
 export async function loginUser(req: Request, res: Response) {
@@ -401,8 +413,7 @@ export async function signupUser(req: Request, res: Response) {
     const { username, email, password, repassword } = req.body;
 
     const [rows]: any = await db.execute(
-      "SELECT Username,Email FROM user WHERE Email = ?",
-      [email],
+      "SELECT Username,Email FROM user WHERE Username = ? OR Email = ? ",[username , email]
     );
 
     if (rows.length > 0) {
@@ -410,8 +421,10 @@ export async function signupUser(req: Request, res: Response) {
         req.session.tempMsg = "Username already exists.";
         return res.redirect("/signup");
       }
-      req.session.tempMsg = "Email already exists.";
-      return res.redirect("/signup");
+      if (rows[0].Email === email) {
+        req.session.tempMsg = "Email already exists.";
+        return res.redirect("/signup");
+      }
     }
 
     await db.execute(
@@ -454,9 +467,11 @@ export async function pharmacy_signup(req: Request, res: Response) {
       "SELECT LicenseNumber FROM Pharmacist",
     );
 
-    if (rows[0].LicenseNumber === license_number) {
-      req.session.tempMsg = "LicenseNumber already exists.";
-      return res.redirect("/pharmacist-signup");
+    if (rows.length > 0) {
+      if (rows[0].LicenseNumber === license_number) {
+        req.session.tempMsg = "LicenseNumber already exists.";
+        return res.redirect("/pharmacist-signup");
+      }
     }
 
     await db.execute(
@@ -474,7 +489,10 @@ export async function pharmacy_signup(req: Request, res: Response) {
       res.locals.userID,
     ]);
 
-    await db.execute("DELETE FROM shoppingcart WHERE `shoppingcart`.`CartID` = ?", [res.locals.userID]);
+    await db.execute(
+      "DELETE FROM shoppingcart WHERE `shoppingcart`.`CartID` = ?",
+      [res.locals.userID],
+    );
 
     req.session.userType = "PHARMACIST";
     return res.redirect("/");
@@ -973,7 +991,7 @@ export async function removeCartItem(req: Request, res: Response) {
   }
 }
 
-export async function profile_pharmacist_change(req:Request , res:Response){
+export async function profile_pharmacist_change(req: Request, res: Response) {
   try {
     const { name, email, password, phone, licenseNumber } = req.body;
     const userID = req.session.userID;
@@ -999,29 +1017,29 @@ export async function profile_pharmacist_change(req:Request , res:Response){
   }
 }
 
-export async function pharmacy_update(req:Request , res:Response) {
-    const userID = req.session.userID;
-    if (!userID || req.session.userType !== "PHARMACIST") {
-        return res.redirect("/login");
-    }
+export async function pharmacy_update(req: Request, res: Response) {
+  const userID = req.session.userID;
+  if (!userID || req.session.userType !== "PHARMACIST") {
+    return res.redirect("/login");
+  }
 
-    const {name , address , phone , Description} = req.body;
+  const { name, address, phone, Description } = req.body;
 
-    try {
-        await db.execute(
-            `UPDATE pharmacy
+  try {
+    await db.execute(
+      `UPDATE pharmacy
              SET PharmacyName = ?, Address = ?, ContactNumber = ?, Description = ?
              WHERE PharmacistID = ?`,
-            [name, address, phone, Description, userID]
-        );
+      [name, address, phone, Description, userID],
+    );
 
-        req.session.tempMsg = "Shop profile updated successfully.";
-        return res.redirect("/pharmacy-dashboard?tab=profile");
-    } catch (error) {
-        console.error(error);
-        req.session.tempMsg = "Unable to update shop profile. Please try again.";
-        return res.redirect("/pharmacy-dashboard?tab=profile");
-    }
+    req.session.tempMsg = "Shop profile updated successfully.";
+    return res.redirect("/pharmacy-dashboard?tab=profile");
+  } catch (error) {
+    console.error(error);
+    req.session.tempMsg = "Unable to update shop profile. Please try again.";
+    return res.redirect("/pharmacy-dashboard?tab=profile");
+  }
 }
 
 function parsePharmacyProduct(body: any) {
@@ -1060,7 +1078,8 @@ export async function pharmacy_add(req: Request, res: Response) {
 
   const product = parsePharmacyProduct(req.body);
   if (!product) {
-    req.session.tempMsg = "Enter a product name, valid price, stock quantity, and category.";
+    req.session.tempMsg =
+      "Enter a product name, valid price, stock quantity, and category.";
     return res.redirect("/pharmacy-dashboard");
   }
 
