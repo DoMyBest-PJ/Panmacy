@@ -96,20 +96,50 @@
   }
   renderProducts();
 
-  // Add to cart -> toast + persist a demo entry
-  document.querySelectorAll('[data-add-to-cart]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      try {
-        const cart = JSON.parse(localStorage.getItem('pm_cart') || '[]');
-        const card = btn.closest('.product-card');
-        const name = card.querySelector('.product-card__name').textContent.trim();
-        const existing = cart.find((i) => i.name === name);
-        if (existing) existing.qty += 1;
-        else cart.push({ name, qty: 1 });
-        localStorage.setItem('pm_cart', JSON.stringify(cart));
-        window.pmUpdateCartBadge();
-      } catch (e) {}
-      window.pmToast('เพิ่มลงตะกร้าแล้ว');
-    });
-  });
+  // Add product to the database-backed shopping cart.
+  document.addEventListener("click", async (event) => {
+    const button = event.target.closest("[data-add-to-cart]");
+
+    if (!button || button.disabled) return;
+
+    const productID = button.dataset.productId;
+    const originalText = button.textContent;
+
+    button.disabled = true;
+    button.textContent = "Adding...";
+
+    try {
+        const response = await fetch("/cart/add", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: new URLSearchParams({
+                productID: productID,
+                quantity: "1"
+            })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            throw new Error(result.message || "Unable to add product.");
+        }
+
+        window.pmUpdateCartBadge(result.cartItemCount);
+        if (window.pmToast) {
+            window.pmToast(result.message);
+        } else {
+            alert(result.message);
+        }
+
+    } catch (error) {
+        console.error(error);
+        alert(error.message || "Something went wrong.");
+    } finally {
+        button.disabled = false;
+        button.textContent = originalText;
+    }
+});
+
 })();

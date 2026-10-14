@@ -13,6 +13,7 @@ router.get("/:id", async (req: Request, res: Response) => {
     try {
         const [rows]: any = await db.execute(
             `SELECT
+                pp.PharmacyProductID,
                 pm.PharmacyName,
                 pp.ProductName,
                 pp.Description,

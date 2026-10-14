@@ -119,9 +119,15 @@
                 </div>
                 <div class="product-card__actions">
                   <a href="/product/<%= Product.PharmacyProductID %>" class="btn btn--outline btn--sm">View Details</a>
-                  <% if (isLogin) { %>
-                  <button class="btn btn--primary btn--sm" data-add-to-cart>Add to Cart</button>
-                  <%  } %>
+                  <% if (isLogin && Product.Quantity > 0) { %>
+                  <button type="button" class="btn btn--primary btn--sm" data-add-to-cart data-product-id="<%= Product.PharmacyProductID %>">
+                    Add to Cart
+                  </button>
+                  <% } else if (isLogin) { %>
+                  <button type="button" class="btn btn--primary btn--sm" disabled>
+                    Out of Stock
+                  </button>
+                  <% } %>
 
                 </div>
               </div>

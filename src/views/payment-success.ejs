@@ -6,10 +6,10 @@
 <title>Order Successful — Panmacy</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/variables.css">
-<link rel="stylesheet" href="css/base.css">
-<link rel="stylesheet" href="css/components.css">
-<link rel="stylesheet" href="css/pages/success.css">
+<link rel="stylesheet" href="/css/variables.css">
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/components.css">
+<link rel="stylesheet" href="/css/pages/success.css">
 </head>
 <body>
 
@@ -32,15 +32,15 @@
 
     <div class="order-number-row">
       <span>Order Number</span>
-      <strong>#PM-20260924-0142</strong>
+      <strong>OD-C-<%= order.OrderID %></strong>
     </div>
 
 
     <!-- Order summary -->
     <div class="order-summary-mini" data-group="order-summary-mini">
-      <div class="order-summary-mini__row"><span>Items</span><strong>฿465</strong></div>
-      <div class="order-summary-mini__row"><span>Delivery</span><strong>฿40</strong></div>
-      <div class="order-summary-mini__row"><span>Total Paid</span><strong>฿505</strong></div>
+      <div class="order-summary-mini__row"><span>Items</span><strong>฿<%= Number(order.ItemsTotal).toFixed(2) %></strong></div>
+      <div class="order-summary-mini__row"><span>Delivery</span><strong>฿<%= Number(order.deliveryFee).toFixed(2) %></strong></div>
+      <div class="order-summary-mini__row"><span>Total Paid</span><strong>฿<%= Number(order.totalPaid).toFixed(2) %></strong></div>
       <div class="order-summary-mini__row"><span>Payment Method</span><strong>Cash on delivery</strong></div>
     </div>
 

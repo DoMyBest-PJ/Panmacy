@@ -48,8 +48,81 @@ export function login(req: Request, res: Response) {
   res.render("login", { msg });
 }
 
-export function cart(req: Request, res: Response) {
-  res.render("cart");
+export async function cart(req: Request, res: Response) {
+    const userID = req.session.userID;
+
+    if (!userID || req.session.userType !== "CUSTOMER") {
+        return res.redirect("/login");
+    }
+
+    const msg = req.session.tempMsg;
+    req.session.tempMsg = undefined;
+
+    try {
+        const [rows]: any = await db.execute(
+            `SELECT
+                sc.CartID,
+                ci.CartItemID,
+                ci.Quantity AS CartQuantity,
+                pp.PharmacyProductID,
+                pp.ProductName,
+                pp.Description,
+                pp.Price,
+                pp.Quantity AS Stock,
+                pp.Category,
+                pm.PharmacyID,
+                pm.PharmacyName,
+                pm.Address AS PharmacyAddress
+            FROM ShoppingCart sc
+            JOIN CartItem ci
+                ON sc.CartID = ci.CartID
+            JOIN PharmacyProduct pp
+                ON ci.PharmacyProductID = pp.PharmacyProductID
+            JOIN Pharmacy pm
+                ON pp.PharmacyID = pm.PharmacyID
+            WHERE sc.CustomerID = ?
+              AND sc.Status = 'ACTIVE'
+            ORDER BY pm.PharmacyID, ci.CartItemID`,
+            [userID]
+        );
+
+        // จัดกลุ่มสินค้าแยกตามร้านขายยา
+        const pharmacyMap = new Map<number, any>();
+
+        for (const item of rows) {
+            if (!pharmacyMap.has(item.PharmacyID)) {
+                pharmacyMap.set(item.PharmacyID, {
+                    PharmacyID: item.PharmacyID,
+                    PharmacyName: item.PharmacyName,
+                    PharmacyAddress: item.PharmacyAddress,
+                    items: []
+                });
+            }
+
+            pharmacyMap.get(item.PharmacyID).items.push(item);
+        }
+
+        const pharmacyGroups = Array.from(pharmacyMap.values());
+
+        const subtotal = rows.reduce(
+            (sum: number, item: any) =>
+                sum + Number(item.Price) * Number(item.CartQuantity),
+            0
+        );
+
+        const deliveryFee = pharmacyMap.size * 20;
+
+        res.render("cart", {
+            pharmacyGroups,
+            subtotal,
+            deliveryFee,
+            orderTotal: subtotal + deliveryFee,
+            msg
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Unable to load shopping cart.");
+    }
 }
 
 export async function profile(req: Request, res: Response) {
@@ -284,6 +357,436 @@ export async function createComment(req: Request, res: Response) {
   res.redirect(`/forum/${ThreadID}`);
 }
 
-export function payment_success(req: Request, res: Response) {
-  res.render("payment-success");
+export async function payment_success(req: Request, res: Response) {
+    const userID = req.session.userID;
+    const orderID = Number(req.params.orderID);
+
+    if (!userID || req.session.userType !== "CUSTOMER") {
+        return res.redirect("/login");
+    }
+    if (!Number.isSafeInteger(orderID) || orderID <= 0) {
+        return res.status(400).send("Invalid order ID.");
+    }
+
+    try {
+        const [orders]: any = await db.execute(
+            `SELECT
+                o.OrderID,
+                o.OrderDate,
+                o.TotalAmount,
+                COALESCE(SUM(oi.Quantity * oi.UnitPrice), 0) AS ItemsTotal,
+                COUNT(DISTINCT p.PharmacyID) AS PharmacyCount
+             FROM \`Order\` o
+             LEFT JOIN OrderItem oi ON oi.OrderID = o.OrderID
+             LEFT JOIN PharmacyProduct pp ON pp.PharmacyProductID = oi.PharmacyProductID
+             LEFT JOIN Pharmacy p ON p.PharmacyID = pp.PharmacyID
+             WHERE o.OrderID = ?
+               AND o.CustomerID = ?
+             GROUP BY o.OrderID, o.OrderDate, o.TotalAmount`,
+            [orderID, userID]
+        );
+
+        if (orders.length === 0) {
+            return res.status(404).send("Order not found.");
+        }
+
+        const order = orders[0];
+        order.deliveryFee = Number(order.PharmacyCount) * 20;
+        order.totalPaid = Number(order.ItemsTotal) + order.deliveryFee;
+
+        return res.render("payment-success", { order });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send("Unable to load order confirmation.");
+    }
+}
+
+export async function checkout(req: Request, res: Response) {
+    const userID = req.session.userID;
+    if (!userID || req.session.userType !== "CUSTOMER") {
+        return res.redirect("/login");
+    }
+
+    const con = await db.getConnection();
+    try {
+        await con.beginTransaction();
+
+        const [carts]: any = await con.execute(
+            `SELECT CartID
+             FROM ShoppingCart
+             WHERE CustomerID = ?
+               AND Status = 'ACTIVE'
+             FOR UPDATE`,
+            [userID]
+        );
+
+        if (carts.length === 0) {
+            await con.rollback();
+            req.session.tempMsg = "Your cart is empty.";
+            return res.redirect("/cart");
+        }
+
+        const cartID = Number(carts[0].CartID);
+        const [items]: any = await con.execute(
+            `SELECT
+                ci.PharmacyProductID,
+                ci.Quantity,
+                pp.ProductName,
+                pp.Quantity AS Stock,
+                pp.Price,
+                pp.PharmacyID
+             FROM CartItem ci
+             JOIN PharmacyProduct pp
+               ON pp.PharmacyProductID = ci.PharmacyProductID
+             WHERE ci.CartID = ?
+             FOR UPDATE`,
+            [cartID]
+        );
+
+        if (items.length === 0) {
+            await con.rollback();
+            req.session.tempMsg = "Your cart is empty.";
+            return res.redirect("/cart");
+        }
+
+        const outOfStock = items.find(
+            (item: any) => Number(item.Quantity) > Number(item.Stock)
+        );
+        if (outOfStock) {
+            await con.rollback();
+            req.session.tempMsg = `Not enough stock for ${outOfStock.ProductName}. Please update your cart.`;
+            return res.redirect("/cart");
+        }
+
+        const itemTotal = Number(items.reduce(
+            (sum: number, item: any) =>
+                sum + Number(item.Quantity) * Number(item.Price),
+            0
+        ).toFixed(2));
+
+        const [orderResult]: any = await con.execute(
+            `INSERT INTO \`Order\` (CustomerID, CartID, TotalAmount, Status)
+             VALUES (?, ?, ?, 'PENDING')`,
+            [userID, cartID, itemTotal]
+        );
+        const orderID = Number(orderResult.insertId);
+
+        for (const item of items) {
+            const quantity = Number(item.Quantity);
+            const [stockResult]: any = await con.execute(
+                `UPDATE PharmacyProduct
+                 SET Quantity = Quantity - ?
+                 WHERE PharmacyProductID = ?
+                   AND Quantity >= ?`,
+                [quantity, item.PharmacyProductID, quantity]
+            );
+            if (stockResult.affectedRows !== 1) {
+                throw new Error(`Stock changed during checkout for product ${item.PharmacyProductID}.`);
+            }
+
+            await con.execute(
+                `INSERT INTO OrderItem
+                    (OrderID, PharmacyProductID, Quantity, UnitPrice)
+                 VALUES (?, ?, ?, ?)`,
+                [orderID, item.PharmacyProductID, quantity, item.Price]
+            );
+        }
+
+        await con.execute(
+            "DELETE FROM CartItem WHERE CartID = ?",
+            [cartID]
+        );
+
+        await con.commit();
+        return res.redirect(`/payment-success/${orderID}`);
+    } catch (error) {
+        await con.rollback();
+        console.error(error);
+        req.session.tempMsg = "Unable to complete checkout. Please try again.";
+        return res.redirect("/cart");
+    } finally {
+        con.release();
+    }
+}
+
+async function getCartItemCount(connection: any, customerID: number) {
+    const [rows]: any = await connection.execute(
+        `SELECT COALESCE(SUM(ci.Quantity), 0) AS CartItemCount
+         FROM ShoppingCart sc
+         LEFT JOIN CartItem ci ON ci.CartID = sc.CartID
+         WHERE sc.CustomerID = ?
+           AND sc.Status = 'ACTIVE'`,
+        [customerID]
+    );
+
+    return Number(rows[0].CartItemCount);
+}
+
+export async function addToCart(req: Request, res: Response) {
+    const userID = req.session.userID;
+
+    if (!userID || req.session.userType !== "CUSTOMER") {
+        return res.status(401).json({
+            success: false,
+            message: "Please log in as a customer."
+        });
+    }
+
+    const productID = Number(req.body.productID);
+    const quantity = Number(req.body.quantity ?? 1);
+
+    if (!Number.isSafeInteger(productID) || productID <= 0) {
+        return res.status(400).json({
+            success: false,
+            message: "Invalid product ID."
+        });
+    }
+
+    if (!Number.isSafeInteger(quantity) || quantity <= 0) {
+        return res.status(400).json({
+            success: false,
+            message: "Invalid quantity."
+        });
+    }
+
+    const con = await db.getConnection();
+
+    try {
+        await con.beginTransaction();
+
+        // 1. Check product and lock its row while updating the cart
+        const [products]: any = await con.execute(
+            `SELECT PharmacyProductID, Quantity
+             FROM PharmacyProduct
+             WHERE PharmacyProductID = ?
+             FOR UPDATE`,
+            [productID]
+        );
+
+        if (products.length === 0) {
+            await con.rollback();
+
+            return res.status(404).json({
+                success: false,
+                message: "Product not found."
+            });
+        }
+
+        const stock = Number(products[0].Quantity);
+
+        if (stock <= 0) {
+            await con.rollback();
+
+            return res.status(400).json({
+                success: false,
+                message: "This product is out of stock."
+            });
+        }
+
+        // 2. Find the customer's active cart
+        const [carts]: any = await con.execute(
+            `SELECT CartID
+             FROM ShoppingCart
+             WHERE CustomerID = ?
+               AND Status = 'ACTIVE'
+             LIMIT 1
+             FOR UPDATE`,
+            [userID]
+        );
+
+        let cartID: number;
+
+        if (carts.length > 0) {
+            cartID = carts[0].CartID;
+        } else {
+            // 3. Create a cart if the customer does not have one
+            const [cartResult]: any = await con.execute(
+                `INSERT INTO ShoppingCart (CustomerID, Status)
+                 VALUES (?, 'ACTIVE')`,
+                [userID]
+            );
+
+            cartID = cartResult.insertId;
+        }
+
+        // 4. Check whether this product is already in the cart
+        const [items]: any = await con.execute(
+            `SELECT CartItemID, Quantity
+             FROM CartItem
+             WHERE CartID = ?
+               AND PharmacyProductID = ?
+             FOR UPDATE`,
+            [cartID, productID]
+        );
+
+        if (items.length > 0) {
+            const newQuantity = Number(items[0].Quantity) + quantity;
+
+            if (newQuantity > stock) {
+                await con.rollback();
+
+                return res.status(400).json({
+                    success: false,
+                    message: "Not enough stock available."
+                });
+            }
+
+            await con.execute(
+                `UPDATE CartItem
+                 SET Quantity = ?
+                 WHERE CartItemID = ?`,
+                [newQuantity, items[0].CartItemID]
+            );
+        } else {
+            await con.execute(
+                `INSERT INTO CartItem
+                    (CartID, PharmacyProductID, Quantity)
+                 VALUES (?, ?, ?)`,
+                [cartID, productID, quantity]
+            );
+        }
+
+        const cartItemCount = await getCartItemCount(con, userID);
+        await con.commit();
+
+        return res.json({
+            success: true,
+            message: "Added to cart successfully.",
+            cartItemCount
+        });
+
+    } catch (error) {
+        await con.rollback();
+        console.error(error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Unable to add product to cart."
+        });
+    } finally {
+        con.release();
+    }
+}
+
+export async function updateCartItem(req: Request, res: Response) {
+    const userID = req.session.userID;
+    if (!userID || req.session.userType !== "CUSTOMER") {
+        return res.status(401).json({
+            success: false,
+            message: "Please log in as a customer."
+        });
+    }
+
+    const cartItemID = Number(req.params.id);
+    const quantity = Number(req.body.quantity);
+    if (!Number.isSafeInteger(cartItemID) || cartItemID <= 0 ||
+        !Number.isSafeInteger(quantity) || quantity <= 0) {
+        return res.status(400).json({
+            success: false,
+            message: "Invalid cart item or quantity."
+        });
+    }
+
+    const con = await db.getConnection();
+    try {
+        await con.beginTransaction();
+        const [items]: any = await con.execute(
+            `SELECT ci.CartItemID, pp.Quantity AS Stock
+             FROM CartItem ci
+             JOIN ShoppingCart sc ON sc.CartID = ci.CartID
+             JOIN PharmacyProduct pp ON pp.PharmacyProductID = ci.PharmacyProductID
+             WHERE ci.CartItemID = ?
+               AND sc.CustomerID = ?
+               AND sc.Status = 'ACTIVE'
+             FOR UPDATE`,
+            [cartItemID, userID]
+        );
+
+        if (items.length === 0) {
+            await con.rollback();
+            return res.status(404).json({
+                success: false,
+                message: "Cart item not found."
+            });
+        }
+
+        if (quantity > Number(items[0].Stock)) {
+            await con.rollback();
+            return res.status(400).json({
+                success: false,
+                message: "Not enough stock available."
+            });
+        }
+
+        await con.execute(
+            "UPDATE CartItem SET Quantity = ? WHERE CartItemID = ?",
+            [quantity, cartItemID]
+        );
+        const cartItemCount = await getCartItemCount(con, userID);
+        await con.commit();
+
+        return res.json({ success: true, cartItemCount });
+    } catch (error) {
+        await con.rollback();
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: "Unable to update cart item."
+        });
+    } finally {
+        con.release();
+    }
+}
+
+export async function removeCartItem(req: Request, res: Response) {
+    const userID = req.session.userID;
+    if (!userID || req.session.userType !== "CUSTOMER") {
+        return res.status(401).json({
+            success: false,
+            message: "Please log in as a customer."
+        });
+    }
+
+    const cartItemID = Number(req.params.id);
+    if (!Number.isSafeInteger(cartItemID) || cartItemID <= 0) {
+        return res.status(400).json({
+            success: false,
+            message: "Invalid cart item ID."
+        });
+    }
+
+    const con = await db.getConnection();
+    try {
+        await con.beginTransaction();
+        const [result]: any = await con.execute(
+            `DELETE ci FROM CartItem ci
+             JOIN ShoppingCart sc ON sc.CartID = ci.CartID
+             WHERE ci.CartItemID = ?
+               AND sc.CustomerID = ?
+               AND sc.Status = 'ACTIVE'`,
+            [cartItemID, userID]
+        );
+
+        if (result.affectedRows === 0) {
+            await con.rollback();
+            return res.status(404).json({
+                success: false,
+                message: "Cart item not found."
+            });
+        }
+
+        const cartItemCount = await getCartItemCount(con, userID);
+        await con.commit();
+
+        return res.json({ success: true, cartItemCount });
+    } catch (error) {
+        await con.rollback();
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: "Unable to remove cart item."
+        });
+    } finally {
+        con.release();
+    }
 }

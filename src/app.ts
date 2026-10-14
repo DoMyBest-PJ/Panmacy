@@ -19,11 +19,13 @@ import {
   profile_change,
   create_thread,
   createComment,
-  payment_success
+  payment_success,
+  checkout
 } from "./controllers/controll";
 import { db, Connection_status } from "./models/db";
 import forumRouter from "./models/forum";
 import productRouter from "./models/product";
+import cartRouter from "./models/cart";
 
 const app = express();
 const PORT = 3000;
@@ -61,6 +63,7 @@ app.use(async (req, res, next) => {
     res.locals.userID = req.session.userID;
     res.locals.userType = req.session.userType;
     res.locals.isLogin = !!req.session.userID;
+    res.locals.cartItemCount = 0;
 
     if (req.session.userID) {
       const [rows]: any = await db.execute(
@@ -74,6 +77,18 @@ app.use(async (req, res, next) => {
           res.locals.username = rows[0].CustomerName;
         }
         res.locals.user_Email = rows[0].Email;
+      }
+
+      if (res.locals.userType === "CUSTOMER") {
+        const [cartRows]: any = await db.execute(
+          `SELECT COALESCE(SUM(ci.Quantity), 0) AS CartItemCount
+           FROM ShoppingCart sc
+           LEFT JOIN CartItem ci ON ci.CartID = sc.CartID
+           WHERE sc.CustomerID = ?
+             AND sc.Status = 'ACTIVE'`,
+          [req.session.userID],
+        );
+        res.locals.cartItemCount = Number(cartRows[0].CartItemCount);
       }
 
       if (res.locals.userType === "PHARMACIST") {
@@ -95,7 +110,7 @@ app.use(async (req, res, next) => {
   }
 });
 
-Connection_status(); // ใช้ run function ใน db.ts เฉยๆใช้ตรงนี้เเล้วดูรกๆ
+Connection_status(); // ใช้ run function ใน db.ts เฉยๆใส่ตรงนี้เเล้วดูรกๆ
 
 app.get("/", homepage);
 
@@ -135,7 +150,10 @@ app.post("/thread/:threadID/comment" , createComment);
 
 app.use("/product", productRouter);
 
-app.get("/payment-success", payment_success)
+app.get("/payment-success/:orderID", payment_success);
+
+app.use("/cart", cartRouter);
+app.post("/cart/checkout", checkout);
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);

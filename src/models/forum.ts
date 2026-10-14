@@ -11,7 +11,6 @@ router.get("/:id", async (req: Request, res: Response) => {
       return res.redirect("/forum");
     }
 
-    // 1. ดึงข้อมูลกระทู้และชื่อเจ้าของ
     const [forumOwner]: any = await db.execute(
       `SELECT
           u.Role,
@@ -30,12 +29,10 @@ router.get("/:id", async (req: Request, res: Response) => {
       [threadID],
     );
 
-    // ไม่พบกระทู้
     if (forumOwner.length === 0) {
       return res.redirect("/forum");
     }
 
-    // 2. ดึง Comment ของกระทู้นี้ทั้งหมด
     const [comment]: any = await db.execute(
       `SELECT
           c.Content,
