@@ -20,7 +20,12 @@ import {
   create_thread,
   createComment,
   payment_success,
-  checkout
+  checkout,
+  profile_pharmacist_change,
+  pharmacy_update,
+  pharmacy_add,
+  pharmacy_edit,
+  pharmacy_delete
 } from "./controllers/controll";
 import { db, Connection_status } from "./models/db";
 import forumRouter from "./models/forum";
@@ -142,6 +147,8 @@ app.get("/signout", signout);
 
 app.post("/profile-change", profile_change);
 
+app.post("/profile-pharmacist-change", profile_pharmacist_change);
+
 app.use("/forum", forumRouter);
 
 app.post("/create-thread", create_thread);
@@ -153,7 +160,16 @@ app.use("/product", productRouter);
 app.get("/payment-success/:orderID", payment_success);
 
 app.use("/cart", cartRouter);
+
 app.post("/cart/checkout", checkout);
+
+app.post("/pharmacy-update", pharmacy_update);
+
+app.post("/pharmacy-add", pharmacy_add);
+
+app.post("/pharmacy-edit/:productID", pharmacy_edit);
+
+app.post("/pharmacy-delete/:productID", pharmacy_delete);
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);

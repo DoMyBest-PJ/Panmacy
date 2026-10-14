@@ -36,6 +36,11 @@
   <div class="pharmacy-dashboard-content">
     <%- include('element/nav') %>
     <main class="dash-main">
+    <% if (msg) { %>
+      <div class="card" id="dashboard-message" role="alert" style="margin-bottom: var(--sp-4); padding: var(--sp-4);">
+        <%= msg %>
+      </div>
+    <% } %>
     <!-- Dashboard -->
     <section data-pharm-panel="dashboard">
       <div class="dash-header">
@@ -57,8 +62,8 @@
         </div>
         <div class="stat-card">
           <div class="stat-card__label">Products live</div>
-          <div class="stat-card__value">186</div>
-          <div class="stat-card__hint">4 low stock</div>
+          <div class="stat-card__value"><%= live %></div>
+          <div class="stat-card__hint"><%= lowS %> low stock (Stock less than 5)</div>
         </div>
       </div>
       <div class="panel">
@@ -116,35 +121,38 @@
           <span class="panel__title" id="product-form-title">Add product</span>
         </div>
         <div class="panel__body">
-          <form id="product-form" style="display:grid;gap:16px;max-width:560px">
+          <form id="product-form" style="display:grid;gap:16px;max-width:560px" method="post" action="/pharmacy-add">
+            <input type="hidden" id="p-id" value="">
             <div class="field">
               <label class="field__label" for="p-name">Product name</label>
-              <input type="text" id="p-name" class="input" required placeholder="e.g. Paracetamol 500mg 10 Tablets">
+              <input type="text" id="p-name" class="input" required placeholder="e.g. Paracetamol 500mg 10 Tablets" name="productname">
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
               <div class="field">
                 <label class="field__label" for="p-price">Price (฿)</label>
-                <input type="number" id="p-price" class="input" required min="1" placeholder="25">
+                <input type="number" id="p-price" class="input" required min="0" step="0.01" placeholder="25" name="price">
               </div>
               <div class="field">
                 <label class="field__label" for="p-stock">Stock</label>
-                <input type="number" id="p-stock" class="input" required min="0" placeholder="100">
+                <input type="number" id="p-stock" class="input" required min="0" placeholder="100" name="quantity">
               </div>
             </div>
             <div class="field">
               <label class="field__label" for="p-cat">Category</label>
-              <select id="p-cat" class="select" style="width:100%;height:46px">
-                <option>Pain Relief/Fever</option>
-                <option>Cold &amp; Flu</option>
+              <select id="p-cat" class="select" style="width:100%;height:46px" name="category">
                 <option>Allergy</option>
-                <option>Vitamins</option>
-                <option>Digestive</option>
+                <option>Cold & Sore Throat</option>
+                <option>Digestive Health</option>
+                <option>First Aid</option>
+                <option>Hygiene</option>
+                <option>Pain & Fever Relief</option>
                 <option>Skin Care</option>
+                <option>Vitamins & Supplements</option>
               </select>
             </div>
             <div class="field">
               <label class="field__label" for="p-desc">Description</label>
-              <textarea id="p-desc" class="input" style="height:90px;padding-top:12px;resize:vertical" placeholder="Short product description"></textarea>
+              <textarea id="p-desc" class="input" style="height:90px;padding-top:12px;resize:vertical" placeholder="Short product description" name="description"></textarea>
             </div>
             <div style="display:flex;gap:8px">
               <button type="submit" class="btn btn--primary">Save product</button>
@@ -163,33 +171,27 @@
               <tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Actions</th></tr>
             </thead>
             <tbody>
-              <tr data-product>
-                <td><strong>Paracetamol 500mg 10 Tablets</strong></td>
-                <td>Pain Relief/Fever</td>
-                <td>฿25</td>
-                <td>240</td>
-                <td>
-                  <button type="button" class="btn btn--sm" style="border:1px solid var(--pm-line-200)" data-edit-product>Edit</button>
-                </td>
-              </tr>
-              <tr data-product>
-                <td><strong>Cetirizine 10mg 10 Tablets</strong></td>
-                <td>Allergy</td>
-                <td>฿45</td>
-                <td>88</td>
-                <td>
-                  <button type="button" class="btn btn--sm" style="border:1px solid var(--pm-line-200)" data-edit-product>Edit</button>
-                </td>
-              </tr>
-              <tr data-product>
-                <td><strong>Vitamin C 1000mg 30 Tabs</strong></td>
-                <td>Vitamins</td>
-                <td>฿180</td>
-                <td>42</td>
-                <td>
-                  <button type="button" class="btn btn--sm" style="border:1px solid var(--pm-line-200)" data-edit-product>Edit</button>
-                </td>
-              </tr>
+              <% if (products.length === 0) { %>
+              <tr><td colspan="5">No products have been added yet.</td></tr>
+              <% } else { %>
+                <% products.forEach((product) => { %>
+                <tr
+                  data-product
+                  data-product-id="<%= product.PharmacyProductID %>"
+                  data-description="<%= product.Description || '' %>">
+                  <td><strong><%= product.ProductName %></strong></td>
+                  <td><%= product.Category %></td>
+                  <td>฿<%= Number(product.Price).toFixed(2) %></td>
+                  <td><%= product.Quantity %></td>
+                  <td>
+                    <button type="button" class="btn btn--sm" style="border:1px solid var(--pm-line-200)" data-edit-product>Edit</button>
+                    <form method="post" action="/pharmacy-delete/<%= product.PharmacyProductID %>" style="display:inline" data-delete-product-form>
+                      <button type="submit" class="btn btn--sm" style="border:1px solid var(--pm-line-200);color:var(--pm-coral-600)">Delete</button>
+                    </form>
+                  </td>
+                </tr>
+                <% }) %>
+              <% } %>
             </tbody>
           </table>
         </div>
@@ -265,29 +267,28 @@
       </div>
       <div class="panel">
         <div class="panel__body">
-          <form id="shop-profile-form" style="display:grid;gap:16px;max-width:560px">
+          <form id="shop-profile-form" style="display:grid;gap:16px;max-width:560px" method="post" action="/pharmacy-update">
             <div class="field">
               <label class="field__label" for="shop-name">Pharmacy name</label>
-              <input type="text" id="shop-name" class="input" value="SafeCare Pharmacy — Sukhumvit Branch">
+              <input type="text" id="shop-name" class="input" value="<%= pharmacy.PharmacyName %>" name="name">
             </div>
             <div class="field">
               <label class="field__label" for="shop-address">Address</label>
-              <input type="text" id="shop-address" class="input" value="88 Sukhumvit Rd, Khlong Toei, Bangkok 10110">
+              <input type="text" id="shop-address" class="input" value="<%= pharmacy.Address %>" name="address">
             </div>
             <div class="field">
-              <label class="field__label" for="shop-phone">Phone</label>
-              <input type="tel" id="shop-phone" class="input" value="02-123-4567">
+              <label class="field__label" for="shop-phone">Contact Number</label>
+              <input type="tel" id="shop-phone" class="input" value="<%= pharmacy.ContactNumber %>" name="phone">
             </div>
             <div class="field">
               <label class="field__label" for="shop-about">Description</label>
-              <textarea id="shop-about" class="input" style="height:100px;padding-top:12px;resize:vertical">Licensed community pharmacy serving Sukhumvit since 2012. Verified on Panmacy.</textarea>
+              <textarea id="shop-about" class="input" style="height:100px;padding-top:12px;resize:vertical" name="Description"><%= pharmacy.Description %></textarea>
             </div>
             <button type="submit" class="btn btn--primary" style="justify-self:start">Save profile</button>
           </form>
         </div>
       </div>
     </section>
-    <a href="/signout"><button>Sign Out</button></a>
     </main>
   </div>
 </div>
@@ -297,7 +298,9 @@
 (function () {
   const tabs = document.querySelectorAll('[data-pharm-tab]');
   const panels = document.querySelectorAll('[data-pharm-panel]');
-  function showTab(id) {
+  const dashboardMessage = document.getElementById('dashboard-message');
+  function showTab(id, dismissMessage = true) {
+    if (dismissMessage && dashboardMessage) dashboardMessage.remove();
     tabs.forEach((t) => t.classList.toggle('is-active', t.getAttribute('data-pharm-tab') === id));
     panels.forEach((p) => { p.hidden = p.getAttribute('data-pharm-panel') !== id; });
   }
@@ -311,48 +314,53 @@
   const addPanel = document.getElementById('add-product-panel');
   const formTitle = document.getElementById('product-form-title');
   const productForm = document.getElementById('product-form');
+  const productIdInput = document.getElementById('p-id');
+  const productNameInput = document.getElementById('p-name');
+  const productPriceInput = document.getElementById('p-price');
+  const productStockInput = document.getElementById('p-stock');
+  const productCategoryInput = document.getElementById('p-cat');
+  const productDescriptionInput = document.getElementById('p-desc');
+
   document.getElementById('btn-add-product').addEventListener('click', () => {
     formTitle.textContent = 'Add product';
     productForm.reset();
+    productIdInput.value = '';
+    productForm.action = '/pharmacy-add';
     addPanel.hidden = false;
     showTab('products');
   });
   document.getElementById('cancel-product').addEventListener('click', () => {
     addPanel.hidden = true;
   });
-  productForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const name = document.getElementById('p-name').value;
-    const price = document.getElementById('p-price').value;
-    const stock = document.getElementById('p-stock').value;
-    const cat = document.getElementById('p-cat').value;
-    const tbody = document.querySelector('#product-table tbody');
-    const tr = document.createElement('tr');
-    tr.setAttribute('data-product', '');
-    tr.innerHTML = `<td><strong>${name}</strong></td><td>${cat}</td><td>฿${price}</td><td>${stock}</td>
-      <td><button type="button" class="btn btn--sm" style="border:1px solid var(--pm-line-200)" data-edit-product>Edit</button></td>`;
-    tbody.prepend(tr);
-    addPanel.hidden = true;
-    productForm.reset();
-    pmToast('Product saved');
-  });
   document.getElementById('product-table').addEventListener('click', (e) => {
     const btn = e.target.closest('[data-edit-product]');
     if (!btn) return;
     const row = btn.closest('tr');
-    const name = row.querySelector('strong').textContent;
+    const cells = row.cells;
+    productIdInput.value = row.dataset.productId;
+    productForm.action = `/pharmacy-edit/${encodeURIComponent(row.dataset.productId)}`;
     formTitle.textContent = 'Edit product';
-    document.getElementById('p-name').value = name;
-    document.getElementById('p-price').value = row.cells[2].textContent.replace('฿', '');
-    document.getElementById('p-stock').value = row.cells[3].textContent;
-    document.getElementById('p-cat').value = row.cells[1].textContent;
+    productNameInput.value = cells[0].querySelector('strong').textContent.trim();
+    productPriceInput.value = cells[2].textContent.replace('฿', '').trim();
+    productStockInput.value = cells[3].textContent.trim();
+    productDescriptionInput.value = row.dataset.description;
+    const category = cells[1].textContent.trim();
+    if (![...productCategoryInput.options].some((option) => option.value === category)) {
+      productCategoryInput.add(new Option(category, category));
+    }
+    productCategoryInput.value = category;
     addPanel.hidden = false;
+    showTab('products');
   });
 
-  document.getElementById('shop-profile-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    pmToast('Shop profile updated');
+  document.getElementById('product-table').addEventListener('submit', (e) => {
+    const form = e.target.closest('[data-delete-product-form]');
+    if (form && !window.confirm('Delete this product from your catalog?')) {
+      e.preventDefault();
+    }
   });
+
+  showTab('<%= activeTab %>', false);
 })();
 </script>
 </body>
