@@ -82,7 +82,7 @@ INSERT INTO Pharmacy (PharmacyID, PharmacistID, PharmacyName, Address, ContactNu
 
 
 -- ---------------------------------------------------------------------
--- 5. Product (20 rows)
+-- 5. PharmacyProduct (20 rows)
 -- ---------------------------------------------------------------------
 INSERT INTO PharmacyProduct (PharmacyProductID, PharmacyID, ProductName, Description, Quantity, Price, Category) VALUES
 (1,  1, 'Paracetamol 500 mg (10 tablets)', 'Relieves pain and reduces fever.', 200, 25.00, 'Pain & Fever Relief'),
