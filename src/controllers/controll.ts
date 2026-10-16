@@ -609,7 +609,7 @@ export async function payment_success(req: Request, res: Response) {
   }
 }
 
-export async function checkout(req: Request, res: Response) {
+export async function   checkout(req: Request, res: Response) {
   const userID = req.session.userID;
   if (!userID || req.session.userType !== "CUSTOMER") {
     return res.redirect("/login");
@@ -675,11 +675,15 @@ export async function checkout(req: Request, res: Response) {
         )
         .toFixed(2),
     );
+    const deliveryFee = new Set(
+      items.map((item: any) => Number(item.PharmacyID)),
+    ).size * 20;
+    const orderTotal = Number((itemTotal + deliveryFee).toFixed(2));
 
     const [orderResult]: any = await con.execute(
       `INSERT INTO \`Order\` (CustomerID, CartID, TotalAmount, Status)
              VALUES (?, ?, ?, 'PENDING')`,
-      [userID, cartID, itemTotal],
+      [userID, cartID, orderTotal],
     );
     const orderID = Number(orderResult.insertId);
 
